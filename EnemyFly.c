@@ -1,17 +1,15 @@
 /*=============================================================================
 
-		“G( •‚—Vƒ^ƒCƒv )[ EnemyFly.cpp ]
+		æ•µ( æµ®éŠã‚¿ã‚¤ãƒ— )[ EnemyFly.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/01/11
 -------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <time.h>
 #include "main.h"
@@ -24,86 +22,86 @@
 #include "Utility.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define MODEL_NAME "data/MODEL/Enemy/RoboFly.x"
 
-#define MAX_MAT ( 4 )	//	ƒ‚ƒfƒ‹‚ÌÅ‘åƒ}ƒeƒŠƒAƒ‹”
+#define MAX_MAT ( 4 )	//	ãƒ¢ãƒ‡ãƒ«ã®æœ€å¤§ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 void SetEnemyFly( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point );
 
-//	“–‚½‚è”»’è
+//	å½“ãŸã‚Šåˆ¤å®š
 void CollisionEnemyFly( int Cnt );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPD3DXMESH g_pMeshEnemyFly;	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+LPD3DXMESH g_pMeshEnemyFly;	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 
-LPD3DXBUFFER g_pBufferMatEnemyFly;	//	ƒ}ƒeƒŠƒAƒ‹î•ñ
+LPD3DXBUFFER g_pBufferMatEnemyFly;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±
 
-DWORD g_nNumMatEnemyFly;	//	ƒ}ƒeƒŠƒAƒ‹”
+DWORD g_nNumMatEnemyFly;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
-LPDIRECT3DTEXTURE9 g_pTextureEnemyFly[ MAX_MAT ] = { NULL };//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DTEXTURE9 g_pTextureEnemyFly[ MAX_MAT ] = { NULL };//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-D3DXMATERIAL* pMatEnemyFly;	//	ƒ}ƒeƒŠƒAƒ‹ƒ|ƒCƒ“ƒ^
+D3DXMATERIAL* pMatEnemyFly;	//	ãƒãƒ†ãƒªã‚¢ãƒ«ãƒã‚¤ãƒ³ã‚¿
 
-ENEMY g_EnemyFly[ MAX_ENEMY_FLY ];	//	“G\‘¢‘Ì
+ENEMY g_EnemyFly[ MAX_ENEMY_FLY ];	//	æ•µæ§‹é€ ä½“
 
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitTargetFly( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitTargetFly( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitEnemyFly( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetNextMode();
 
-	//	Œ»İ‚Ì‚ğæ“¾
+	//	ç¾åœ¨ã®æ™‚åˆ»ã‚’å–å¾—
 	srand((unsigned)time(NULL));
 
 
 	HRESULT hr;
 
-	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ƒtƒ@ƒCƒ‹–¼
+	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ãƒ•ã‚¡ã‚¤ãƒ«å
 							D3DXMESH_MANAGED,
-							pDevice,				//	ƒfƒoƒCƒX
-							NULL,					//	—×Úƒoƒbƒtƒ@
-							&g_pBufferMatEnemyFly,		//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚ğŠi”[
+							pDevice,				//	ãƒ‡ãƒã‚¤ã‚¹
+							NULL,					//	éš£æ¥ãƒãƒƒãƒ•ã‚¡
+							&g_pBufferMatEnemyFly,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’æ ¼ç´
 							NULL,
-							&g_nNumMatEnemyFly,		//	ƒ}ƒeƒŠƒAƒ‹”
-							&g_pMeshEnemyFly );		//	ƒƒbƒVƒ…
+							&g_nNumMatEnemyFly,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
+							&g_pMeshEnemyFly );		//	ãƒ¡ãƒƒã‚·ãƒ¥
 
-	//	ƒ‚ƒfƒ‹‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ¢ãƒ‡ãƒ«ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( hr ) )
 	{
 
-		MessageBox( NULL , "[ EnemyFly.cpp ]\n MODEL_NAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ EnemyFly.cpp ]\n MODEL_NAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìƒ|ƒCƒ“ƒ^‚Æ‚µ‚Äƒoƒbƒtƒ@‚ÌƒAƒhƒŒƒX‚ğæ“¾
+	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®ãƒã‚¤ãƒ³ã‚¿ã¨ã—ã¦ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	pMatEnemyFly = ( D3DXMATERIAL* )g_pBufferMatEnemyFly -> GetBufferPointer();
 
 	for( int i = 0 ; i < ( int )g_nNumMatEnemyFly ; i++ )
@@ -111,11 +109,11 @@ void InitEnemyFly( void )
 		if( pMatEnemyFly[ i ].pTextureFilename != NULL )
 		{
 
-			//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 			if( FAILED( D3DXCreateTextureFromFile( pDevice , pMatEnemyFly[ i ].pTextureFilename , &g_pTextureEnemyFly[ i ]  ) ) )
 			{
 
-				MessageBox( NULL , "[ EnemyFly.cpp ]\n MODEL_NAME\n‚Ì‰æ‘œ‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+				MessageBox( NULL , "[ EnemyFly.cpp ]\n MODEL_NAME\nã®ç”»åƒã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 			}	//	end of if
 
@@ -124,39 +122,39 @@ void InitEnemyFly( void )
 	}	//	end of for
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_ENEMY_FLY ; Cnt++ )
 	{
 
-		//	À•W
+		//	åº§æ¨™
 		g_EnemyFly[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§ç‡
 		g_EnemyFly[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›è»¢é‡
 		g_EnemyFly[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	‘O‚ÌÀ•W
+		//	å‰ã®åº§æ¨™
 		g_EnemyFly[ Cnt ].OldPos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	ˆÚ“®—Ê
+		//	ç§»å‹•é‡
 		g_EnemyFly[ Cnt ].Move = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	”¼Œa
+		//	åŠå¾„
 		g_EnemyFly[ Cnt ].Radius = 3.0f;
 
-		//	g—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_EnemyFly[ Cnt ].Use = false;
 
 	}	//	end of for
 
 
-	//	ƒ‚[ƒh‚ªƒ^ƒCƒgƒ‹‚Ì
+	//	ãƒ¢ãƒ¼ãƒ‰ãŒã‚¿ã‚¤ãƒˆãƒ«ã®æ™‚
 	if( *Mode == MODE_TITLE )
 	{
 
-		//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+		//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 		SetEnemyFly( D3DXVECTOR3( -50.0f , 40.0f , -18.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) , ( TYPE_POINT )0 );
 		SetEnemyFly( D3DXVECTOR3( 50.0f , 40.0f , -19.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) , ( TYPE_POINT )0 );
 
@@ -165,15 +163,15 @@ void InitEnemyFly( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitEnemyFly( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitEnemyFly( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitEnemyFly( void )
 {
 
-	if( g_pMeshEnemyFly != NULL )	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+	if( g_pMeshEnemyFly != NULL )	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 	{
 
 		g_pMeshEnemyFly -> Release();
@@ -181,7 +179,7 @@ void UninitEnemyFly( void )
 
 	}	//	end of if
 
-	if( g_pBufferMatEnemyFly != NULL )	//	ƒ}ƒeƒŠƒAƒ‹î•ñŠJ•ú
+	if( g_pBufferMatEnemyFly != NULL )	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±é–‹æ”¾
 	{
 
 		g_pBufferMatEnemyFly -> Release();
@@ -193,18 +191,18 @@ void UninitEnemyFly( void )
 }	//	end of func
  
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdataEnemyFly( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdataEnemyFly( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateEnemyFly( void )
 {
 
-	//	‰e‚Ìî•ñæ“¾
+	//	å½±ã®æƒ…å ±å–å¾—
 	SHADOW *Shadow = GetShadow( 0 );
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetNextMode();
 
 
@@ -217,14 +215,14 @@ void UpdateEnemyFly( void )
 			if( g_EnemyFly[ Cnt ].Use == true)
 			{
 
-				//	‘O‰ñ‚ÌÀ•W‚ğæ“¾
+				//	å‰å›ã®åº§æ¨™ã‚’å–å¾—
 				g_EnemyFly[ Cnt ].OldPos = g_EnemyFly[ Cnt ].World.Pos;
 
 
 				g_EnemyFly[ Cnt ].World.Pos += g_EnemyFly[ Cnt ].Move;
 
 
-				//	“–‚½‚è”»’è
+				//	å½“ãŸã‚Šåˆ¤å®š
 				CollisionEnemyFly( Cnt );
 
 			}	//	end of if
@@ -233,15 +231,15 @@ void UpdateEnemyFly( void )
 
 
 
-		//	“G‚ÌoŒ»ˆÊ’u‚ÌŒˆ’è
+		//	æ•µã®å‡ºç¾ä½ç½®ã®æ±ºå®š
 		
-		int i = rand() % TYPE_MAX;	//	oŒ»ˆÊ’u‚ÌŒˆ‚ß‚é•Ï”
+		int i = rand() % TYPE_MAX;	//	å‡ºç¾ä½ç½®ã®æ±ºã‚ã‚‹å¤‰æ•°
 		TYPE_POINT Point = ( TYPE_POINT )i;
 
 		if( Point == TYPE_POINT1 )
 		{
 
-			//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+			//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 			SetEnemyFly( D3DXVECTOR3( 1000.0f , rand()%50 + 50 , 0.0f ) , D3DXVECTOR3( 2.0f , 0.0f , 1.0f ) , Point );
 
 		}	//	end of if
@@ -249,7 +247,7 @@ void UpdateEnemyFly( void )
 		else if( Point == TYPE_POINT2 )
 		{
 
-			//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+			//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 			SetEnemyFly( D3DXVECTOR3( -1000.0f , rand()%50 + 50 , 0.0f ) , D3DXVECTOR3( 1.5f , 0.0f , 1.5f ) , Point );
 
 		}	//	end of else if
@@ -257,7 +255,7 @@ void UpdateEnemyFly( void )
 		else if( Point == TYPE_POINT3 )
 		{
 
-			//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+			//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 			SetEnemyFly( D3DXVECTOR3( 0.0f , rand()%50 + 50 , 1000.0f ) , D3DXVECTOR3( 1.0f , 0.0f , 2.0f ) , Point );
 
 		}	//	end of else if
@@ -268,20 +266,20 @@ void UpdateEnemyFly( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawEnemyFly( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawEnemyFly( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawEnemyFly( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
 
-	//	Œ»İƒfƒoƒCƒX‚Éİ’è‚³‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìæ“¾
+	//	ç¾åœ¨ãƒ‡ãƒã‚¤ã‚¹ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®å–å¾—
 	D3DMATERIAL9 matDef;
 	pDevice -> GetMaterial( &matDef );
 
@@ -292,20 +290,20 @@ void DrawEnemyFly( void )
 		if( g_EnemyFly[ Cnt ].Use == true)
 		{
 
-			//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorld( g_EnemyFly[ Cnt ].World.Pos , g_EnemyFly[ Cnt ].World.Rot , g_EnemyFly[ Cnt ].World.Scl );
 
 
 			for( int i = 0 ; i < ( int )g_nNumMatEnemyFly ; i++ )
 			{
-				//	ƒfƒoƒCƒX‚Éƒ}ƒeƒŠƒAƒ‹‚ğİ’è
+				//	ãƒ‡ãƒã‚¤ã‚¹ã«ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¨­å®š
 				pDevice -> SetMaterial( &pMatEnemyFly[ i ].MatD3D );
 
-				//	ƒeƒNƒXƒ`ƒƒİ’è
+				//	ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 				pDevice -> SetTexture( 0 , g_pTextureEnemyFly[ i ] );
 
 
-				//	•`‰æ
+				//	æç”»
 				g_pMeshEnemyFly -> DrawSubset( i );
 
 			}	//	end of for
@@ -321,12 +319,12 @@ void DrawEnemyFly( void )
 
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetEnemyFly( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Move	ˆÚ“®—Ê
-			TYPE_POINT Point	oŒ»ˆÊ’u
- –ß‚è’l:	
- à–¾:		ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetEnemyFly( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Move	ç§»å‹•é‡
+			TYPE_POINT Point	å‡ºç¾ä½ç½®
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetEnemyFly( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
 {
@@ -337,19 +335,19 @@ void SetEnemyFly( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
 		if( g_EnemyFly[ Cnt ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			g_EnemyFly[ Cnt ].World.Pos = Pos;
 
-			//	ˆÚ“®—Ê
+			//	ç§»å‹•é‡
 			g_EnemyFly[ Cnt ].Move = Move;
 
-			//	oŒ»ˆÊ’u
+			//	å‡ºç¾ä½ç½®
 			g_EnemyFly[ Cnt ].Point = Point;
 
-			//	g—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_EnemyFly[ Cnt ].Use = true;
 
-			//	‰e‚ÌƒZƒbƒg
+			//	å½±ã®ã‚»ãƒƒãƒˆ
 //			SetShadow( g_EnemyFly[ Cnt ].World.Pos , 15.0f , D3DXCOLOR( 0.5f , 0.5f , 0.5f , 1.0f ) );
 
 			break;
@@ -361,19 +359,19 @@ void SetEnemyFly( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void CollisionEnemyFly( int Cnt )
- ˆø”:		int Cnt		“G\‘¢‘Ì‚ÌƒJƒEƒ“ƒ^
- –ß‚è’l:	
- à–¾:		“–‚½‚è”»’è
+ é–¢æ•°å:	void CollisionEnemyFly( int Cnt )
+ å¼•æ•°:		int Cnt		æ•µæ§‹é€ ä½“ã®ã‚«ã‚¦ãƒ³ã‚¿
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		å½“ãŸã‚Šåˆ¤å®š
 -----------------------------------------------------------------------------*/
 void CollisionEnemyFly( int Cnt )
 {
 
-	//	ƒƒbƒVƒ…ƒEƒH[ƒ‹î•ñæ“¾
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«æƒ…å ±å–å¾—
 	MESHWALL *MeshWall = GetMeshWall();
 
 
-	//	•Ç‚Æ‚Ì”»’è
+	//	å£ã¨ã®åˆ¤å®š
 	if( g_EnemyFly[ Cnt ].World.Pos.z + 10.0f > MeshWall[ 0 ].World.Pos.z )
 	{
 
@@ -403,12 +401,12 @@ void CollisionEnemyFly( int Cnt )
 	}	//	end of else if
 
 
-	//	Œš•¨î•ñ‚Ìæ“¾
+	//	å»ºç‰©æƒ…å ±ã®å–å¾—
 	BUILDING *Building = GetBuilding();
 
 	for( int CntBuilding = 0 ; CntBuilding < MAX_BUILDING ; CntBuilding++ , Building++ )
 	{
-		//	‹…‚Æ‹…‚Ì“–‚½‚è”»’è
+		//	çƒã¨çƒã®å½“ãŸã‚Šåˆ¤å®š
 		if( SphereCollision( D3DXVECTOR3( g_EnemyFly[ Cnt ].World.Pos.x , g_EnemyFly[ Cnt ].World.Pos.y + 10.0f , g_EnemyFly[ Cnt ].World.Pos.z ) , D3DXVECTOR3( Building -> World.Pos.x , Building -> World.Pos.y + 30.0f , Building -> World.Pos.z ) , g_EnemyFly[ Cnt ].Radius , Building -> Radius ) )
 		{
 
@@ -440,10 +438,10 @@ void CollisionEnemyFly( int Cnt )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	ENEMY *GetEnemyFly( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		“G( •‚—Vƒ^ƒCƒv )î•ñ‚Ìæ“¾
+ é–¢æ•°å:	ENEMY *GetEnemyFly( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ•µ( æµ®éŠã‚¿ã‚¤ãƒ— )æƒ…å ±ã®å–å¾—
 -----------------------------------------------------------------------------*/
 ENEMY *GetEnemyFly( void )
 {
