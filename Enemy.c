@@ -1,17 +1,14 @@
 /*=============================================================================
 
-		“G[ Enemy.cpp ]
+		æ•µ[ Enemy.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
-
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/01/05
 -------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <time.h>
 #include <math.h>
@@ -24,85 +21,85 @@
 #include "Utility.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define MODEL_NAME "data/MODEL/Enemy/Robo.x"
 
-#define MAX_MAT ( 4 )	//	ƒ‚ƒfƒ‹‚ÌÅ‘åƒ}ƒeƒŠƒAƒ‹”
+#define MAX_MAT ( 4 )	//	ãƒ¢ãƒ‡ãƒ«ã®æœ€å¤§ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 void SetEnemy( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point );
 
-//	“–‚½‚è”»’è
+//	å½“ãŸã‚Šåˆ¤å®š
 void CollisionEnemy( int Cnt );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPD3DXMESH g_pMeshEnemy;	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+LPD3DXMESH g_pMeshEnemy;	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 
-LPD3DXBUFFER g_pBufferMatEnemy;	//	ƒ}ƒeƒŠƒAƒ‹î•ñ
+LPD3DXBUFFER g_pBufferMatEnemy;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±
 
-DWORD g_nNumMatEnemy;	//	ƒ}ƒeƒŠƒAƒ‹”
+DWORD g_nNumMatEnemy;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
-LPDIRECT3DTEXTURE9 g_pTextureEnemy[ MAX_MAT ] = { NULL };//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DTEXTURE9 g_pTextureEnemy[ MAX_MAT ] = { NULL };//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-D3DXMATERIAL* pMatEnemy;	//	ƒ}ƒeƒŠƒAƒ‹ƒ|ƒCƒ“ƒ^
+D3DXMATERIAL* pMatEnemy;	//	ãƒãƒ†ãƒªã‚¢ãƒ«ãƒã‚¤ãƒ³ã‚¿
 
-ENEMY g_Enemy[ MAX_ENEMY ];	//	“G\‘¢‘Ì
+ENEMY g_Enemy[ MAX_ENEMY ];	//	æ•µæ§‹é€ ä½“
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitTarget( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitTarget( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitEnemy( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetNextMode();
 
-	//	Œ»İ‚Ì‚ğæ“¾
+	//	ç¾åœ¨ã®æ™‚åˆ»ã‚’å–å¾—
 	srand((unsigned)time(NULL));
 
 
 	HRESULT hr;
 
-	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ƒtƒ@ƒCƒ‹–¼
+	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ãƒ•ã‚¡ã‚¤ãƒ«å
 							D3DXMESH_MANAGED,
-							pDevice,				//	ƒfƒoƒCƒX
-							NULL,					//	—×Úƒoƒbƒtƒ@
-							&g_pBufferMatEnemy,		//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚ğŠi”[
+							pDevice,				//	ãƒ‡ãƒã‚¤ã‚¹
+							NULL,					//	éš£æ¥ãƒãƒƒãƒ•ã‚¡
+							&g_pBufferMatEnemy,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’æ ¼ç´
 							NULL,
-							&g_nNumMatEnemy,		//	ƒ}ƒeƒŠƒAƒ‹”
-							&g_pMeshEnemy );		//	ƒƒbƒVƒ…
+							&g_nNumMatEnemy,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
+							&g_pMeshEnemy );		//	ãƒ¡ãƒƒã‚·ãƒ¥
 
-	//	ƒ‚ƒfƒ‹‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ¢ãƒ‡ãƒ«ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( hr ) )
 	{
 
-		MessageBox( NULL , "[ Enemy.cpp ]\n MODEL_NAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Enemy.cpp ]\n MODEL_NAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìƒ|ƒCƒ“ƒ^‚Æ‚µ‚Äƒoƒbƒtƒ@‚ÌƒAƒhƒŒƒX‚ğæ“¾
+	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®ãƒã‚¤ãƒ³ã‚¿ã¨ã—ã¦ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	pMatEnemy = ( D3DXMATERIAL* )g_pBufferMatEnemy -> GetBufferPointer();
 
 	for( int i = 0 ; i < ( int )g_nNumMatEnemy ; i++ )
@@ -110,11 +107,11 @@ void InitEnemy( void )
 		if( pMatEnemy[ i ].pTextureFilename != NULL )
 		{
 
-			//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 			if( FAILED( D3DXCreateTextureFromFile( pDevice , pMatEnemy[ i ].pTextureFilename , &g_pTextureEnemy[ i ]  ) ) )
 			{
 
-				MessageBox( NULL , "[ Enemy.cpp ]\n MODEL_NAME\n‚Ì‰æ‘œ‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+				MessageBox( NULL , "[ Enemy.cpp ]\n MODEL_NAME\nã®ç”»åƒã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 			}	//	end of if
 
@@ -123,39 +120,39 @@ void InitEnemy( void )
 	}	//	end of for
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_ENEMY ; Cnt++ )
 	{
 
-		//	À•W
+		//	åº§æ¨™
 		g_Enemy[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§ç‡
 		g_Enemy[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›è»¢é‡
 		g_Enemy[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	‘O‚ÌÀ•W
+		//	å‰ã®åº§æ¨™
 		g_Enemy[ Cnt ].OldPos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	ˆÚ“®—Ê
+		//	ç§»å‹•é‡
 		g_Enemy[ Cnt ].Move = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	”¼Œa
+		//	åŠå¾„
 		g_Enemy[ Cnt ].Radius = 3.0f;
 
-		//	g—pƒtƒ‰
+		//	ä½¿ç”¨ãƒ•ãƒ©
 		g_Enemy[ Cnt ].Use = false;
 
 	}	//	end of for
 
 
-	//	ƒ‚[ƒh‚ªƒ^ƒCƒgƒ‹‚Ì
+	//	ãƒ¢ãƒ¼ãƒ‰ãŒã‚¿ã‚¤ãƒˆãƒ«ã®æ™‚
 	if( *Mode == MODE_TITLE )
 	{
 
-		//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+		//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 		SetEnemy( D3DXVECTOR3( 0.0f , 0.0f , -40.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) , ( TYPE_POINT )0 );
 		SetEnemy( D3DXVECTOR3( -30.0f , 0.0f , -20.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) , ( TYPE_POINT )0 );
 		SetEnemy( D3DXVECTOR3( 30.0f , 0.0f , -20.0f ), D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) , ( TYPE_POINT )0 );
@@ -165,15 +162,15 @@ void InitEnemy( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitTarget( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitTarget( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitEnemy( void )
 {
 
-	if( g_pMeshEnemy != NULL )	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+	if( g_pMeshEnemy != NULL )	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 	{
 
 		g_pMeshEnemy -> Release();
@@ -181,7 +178,7 @@ void UninitEnemy( void )
 
 	}	//	end of if
 
-	if( g_pBufferMatEnemy != NULL )	//	ƒ}ƒeƒŠƒAƒ‹î•ñŠJ•ú
+	if( g_pBufferMatEnemy != NULL )	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±é–‹æ”¾
 	{
 
 		g_pBufferMatEnemy -> Release();
@@ -193,18 +190,18 @@ void UninitEnemy( void )
 }	//	end of func
  
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdataTarget( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdataTarget( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateEnemy( void )
 {
 
-	//	‰e‚Ìî•ñæ“¾
+	//	å½±ã®æƒ…å ±å–å¾—
 	SHADOW *Shadow = GetShadow( 0 );
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetNextMode();
 
 
@@ -218,14 +215,14 @@ void UpdateEnemy( void )
 			if( g_Enemy[ Cnt ].Use == true)
 			{
 
-				//	‘O‰ñ‚ÌÀ•W‚ğæ“¾
+				//	å‰å›ã®åº§æ¨™ã‚’å–å¾—
 				g_Enemy[ Cnt ].OldPos = g_Enemy[ Cnt ].World.Pos;
 
 
 				g_Enemy[ Cnt ].World.Pos += g_Enemy[ Cnt ].Move;
 
 
-				//	“–‚½‚è”»’è
+				//	å½“ãŸã‚Šåˆ¤å®š
 				CollisionEnemy( Cnt );
 
 			}	//	end of if
@@ -234,16 +231,16 @@ void UpdateEnemy( void )
 
 
 
-		//	“G‚ÌoŒ»ˆÊ’u‚ÌŒˆ’è
+		//	æ•µã®å‡ºç¾ä½ç½®ã®æ±ºå®š
 		
-		int i = rand() % TYPE_MAX;	//	oŒ»ˆÊ’u‚ÌŒˆ‚ß‚é•Ï”
+		int i = rand() % TYPE_MAX;	//	å‡ºç¾ä½ç½®ã®æ±ºã‚ã‚‹å¤‰æ•°
 		TYPE_POINT Point = ( TYPE_POINT )i;
 
 
 		if( Point == TYPE_POINT1 )
 		{
 
-			//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+			//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 			SetEnemy( D3DXVECTOR3( 1000.0f , 0.0f , 0.0f ) , D3DXVECTOR3( 2.5f , 0.0f , 2.5f ) , Point );
 
 		}	//	end of if
@@ -251,7 +248,7 @@ void UpdateEnemy( void )
 		else if( Point == TYPE_POINT2 )
 		{
 
-			//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+			//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 			SetEnemy( D3DXVECTOR3( -1000.0f , 0.0f , 0.0f ) , D3DXVECTOR3( 2.0f , 0.0f , 2.0f ) , Point );
 
 		}	//	end of else if
@@ -259,7 +256,7 @@ void UpdateEnemy( void )
 		else if( Point == TYPE_POINT3 )
 		{
 
-			//	ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+			//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 			SetEnemy( D3DXVECTOR3( 0.0f , 0.0f , 1000.0f ) , D3DXVECTOR3( 1.5f , 0.0f , 1.5f ) , Point );
 
 		}	//	end of else if
@@ -270,20 +267,20 @@ void UpdateEnemy( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawTarget( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawTarget( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawEnemy( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
 
-	//	Œ»İƒfƒoƒCƒX‚Éİ’è‚³‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìæ“¾
+	//	ç¾åœ¨ãƒ‡ãƒã‚¤ã‚¹ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®å–å¾—
 	D3DMATERIAL9 matDef;
 	pDevice -> GetMaterial( &matDef );
 
@@ -294,20 +291,20 @@ void DrawEnemy( void )
 		if( g_Enemy[ Cnt ].Use == true)
 		{
 
-			//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorld( g_Enemy[ Cnt ].World.Pos , g_Enemy[ Cnt ].World.Rot , g_Enemy[ Cnt ].World.Scl );
 
 
 			for( int i = 0 ; i < ( int )g_nNumMatEnemy ; i++ )
 			{
-				//	ƒfƒoƒCƒX‚Éƒ}ƒeƒŠƒAƒ‹‚ğİ’è
+				//	ãƒ‡ãƒã‚¤ã‚¹ã«ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¨­å®š
 				pDevice -> SetMaterial( &pMatEnemy[ i ].MatD3D );
 
-				//	ƒeƒNƒXƒ`ƒƒİ’è
+				//	ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 				pDevice -> SetTexture( 0 , g_pTextureEnemy[ i ] );
 
 
-				//	•`‰æ
+				//	æç”»
 				g_pMeshEnemy -> DrawSubset( i );
 
 			}	//	end of for
@@ -323,12 +320,12 @@ void DrawEnemy( void )
 
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetTarget( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Move	ˆÚ“®—Ê
-			TYPE_POINT Point	oŒ»ˆÊ’u
- –ß‚è’l:	
- à–¾:		ƒ^[ƒQƒbƒg‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetTarget( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Move	ç§»å‹•é‡
+			TYPE_POINT Point	å‡ºç¾ä½ç½®
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetEnemy( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
 {
@@ -339,19 +336,19 @@ void SetEnemy( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
 		if( g_Enemy[ Cnt ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			g_Enemy[ Cnt ].World.Pos = Pos;
 
-			//	ˆÚ“®—Ê
+			//	ç§»å‹•é‡
 			g_Enemy[ Cnt ].Move = Move;
 
-			//	oŒ»ˆÊ’u
+			//	å‡ºç¾ä½ç½®
 			g_Enemy[ Cnt ].Point = Point;
 
-			//	g—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_Enemy[ Cnt ].Use = true;
 
-			//	‰e‚ÌƒZƒbƒg
+			//	å½±ã®ã‚»ãƒƒãƒˆ
 //			SetShadow( g_Enemy[ Cnt ].World.Pos , 15.0f , D3DXCOLOR( 1.0f , 1.0f , 1.0f , 1.0f ) );
 
 			break;
@@ -363,19 +360,19 @@ void SetEnemy( D3DXVECTOR3 Pos , D3DXVECTOR3 Move , TYPE_POINT Point )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void CollisionEnemy( int Cnt )
- ˆø”:		int Cnt		“G\‘¢‘Ì‚ÌƒJƒEƒ“ƒ^
- –ß‚è’l:	
- à–¾:		“–‚½‚è”»’è
+ é–¢æ•°å:	void CollisionEnemy( int Cnt )
+ å¼•æ•°:		int Cnt		æ•µæ§‹é€ ä½“ã®ã‚«ã‚¦ãƒ³ã‚¿
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		å½“ãŸã‚Šåˆ¤å®š
 -----------------------------------------------------------------------------*/
 void CollisionEnemy( int Cnt )
 {
 
-	//	ƒƒbƒVƒ…ƒEƒH[ƒ‹î•ñæ“¾
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«æƒ…å ±å–å¾—
 	MESHWALL *MeshWall = GetMeshWall();
 
 
-	//	•Ç‚Æ‚Ì”»’è
+	//	å£ã¨ã®åˆ¤å®š
 	if( g_Enemy[ Cnt ].World.Pos.z + 10.0f > MeshWall[ 0 ].World.Pos.z )
 	{
 
@@ -406,12 +403,12 @@ void CollisionEnemy( int Cnt )
 
 
 
-	//	Œš•¨î•ñ‚Ìæ“¾
+	//	å»ºç‰©æƒ…å ±ã®å–å¾—
 	BUILDING *Building = GetBuilding();
 
 	for( int CntBuilding = 0 ; CntBuilding < MAX_BUILDING ; CntBuilding++ , Building++ )
 	{
-		//	‹…‚Æ‹…‚Ì“–‚½‚è”»’è
+		//	çƒã¨çƒã®å½“ãŸã‚Šåˆ¤å®š
 		if( SphereCollision( D3DXVECTOR3( g_Enemy[ Cnt ].World.Pos.x , g_Enemy[ Cnt ].World.Pos.y + 10.0f , g_Enemy[ Cnt ].World.Pos.z ) , D3DXVECTOR3( Building -> World.Pos.x , Building -> World.Pos.y + 30.0f , Building -> World.Pos.z ) , g_Enemy[ Cnt ].Radius , Building -> Radius ) )
 		{
 
@@ -443,10 +440,10 @@ void CollisionEnemy( int Cnt )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	ENEMY *GetEnemyNor( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		ƒ^[ƒQƒbƒgî•ñ‚Ìæ“¾
+ é–¢æ•°å:	ENEMY *GetEnemyNor( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæƒ…å ±ã®å–å¾—
 -----------------------------------------------------------------------------*/
 ENEMY *GetEnemyNor( void )
 {
