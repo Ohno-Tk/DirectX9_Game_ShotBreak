@@ -1,22 +1,20 @@
 /*=============================================================================
 
-		Æ€[ Reticle.cpp ]
+		ç…§æº–[ Reticle.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìŽÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2017/01/18
 -------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-						scanf ‚Ìwarning–hŽ~ 
+						scanf ã®warningé˜²æ­¢ 
 -----------------------------------------------------------------------------*/
 #define _CRT_SECURE_NO_WARNINGS
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <math.h>
@@ -28,7 +26,7 @@
 #include "Enemy.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/reticle.png"
 
@@ -36,39 +34,39 @@
 #define POLYGON_POS_Y ( 5.0f )	//	Y
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 typedef struct
 {
-	WORLD World;	//	ƒ[ƒ‹ƒh•ÏŠ·—p•Ï”
-	D3DXVECTOR3 Move;	//	ˆÚ“®—Ê
-	D3DXCOLOR Color;	//	F
-	float Length;	//	’·‚³
-	bool Use;	//	Žg—pƒtƒ‰ƒO
+	WORLD World;	//	ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ç”¨å¤‰æ•°
+	D3DXVECTOR3 Move;	//	ç§»å‹•é‡
+	D3DXCOLOR Color;	//	è‰²
+	float Length;	//	é•·ã•
+	bool Use;	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 
 }RETICLE;
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexReticle( LPDIRECT3DDEVICE9 pDevice );
 
-//	’¸“_‚Ì•ÏX
+//	é ‚ç‚¹ã®å¤‰æ›´
 void VerTexReticle( VERTEX_3D* pVtx );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferReticle = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DTEXTURE9 g_pTextureReticle = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferReticle = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DTEXTURE9 g_pTextureReticle = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-RETICLE g_Reticle;	//	ƒŒƒeƒBƒNƒ‹\‘¢‘Ì
+RETICLE g_Reticle;	//	ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«æ§‹é€ ä½“
 
 #ifdef _DEBUG
 
@@ -77,60 +75,60 @@ RETICLE g_Reticle;	//	ƒŒƒeƒBƒNƒ‹\‘¢‘Ì
 #endif	//	_DEBUG
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitReticle( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitReticle( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitReticle( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureReticle ) ) )
 	{
 
-		MessageBox( NULL , "[ Reticle.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚Ýž‚Ý‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Reticle.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexReticle( pDevice );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 
-	//	À•W
+	//	åº§æ¨™
 	g_Reticle.World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-	//	Šg‘å—¦
+	//	æ‹¡å¤§çŽ‡
 	g_Reticle.World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-	//	‰ñ“]—Ê
+	//	å›žè»¢é‡
 	g_Reticle.World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-	//	ˆÚ“®—Ê
+	//	ç§»å‹•é‡
 	g_Reticle.Move = D3DXVECTOR3( 5.0f , 5.0f , 5.0f );
 
-	//	’·‚³
+	//	é•·ã•
 	g_Reticle.Length = 30.0f;
 
-	//	F
+	//	è‰²
 	g_Reticle.Color = D3DXCOLOR( 0.0f , 1.0f , 0.0f , 1.0f );
 
 		
 #ifdef _DEBUG
-	//	ƒtƒHƒ“ƒg‚ÌÝ’è
+	//	ãƒ•ã‚©ãƒ³ãƒˆã®è¨­å®š
 	D3DXCreateFont( pDevice ,
-				18 ,	//	•¶Žš‚‚³
-				0 ,	//	•¶Žš•
-				0 ,	//	•¶Žš‚Ì‘¾‚³
-				0 ,	//	ƒ~ƒbƒvƒ}ƒbƒv
-				FALSE ,	//	ƒCƒ^ƒŠƒbƒN
+				18 ,	//	æ–‡å­—é«˜ã•
+				0 ,	//	æ–‡å­—å¹…
+				0 ,	//	æ–‡å­—ã®å¤ªã•
+				0 ,	//	ãƒŸãƒƒãƒ—ãƒžãƒƒãƒ—
+				FALSE ,	//	ã‚¤ã‚¿ãƒªãƒƒã‚¯
 				SHIFTJIS_CHARSET ,
 				OUT_DEFAULT_PRECIS ,
 				DEFAULT_QUALITY ,
@@ -142,15 +140,15 @@ void InitReticle( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitReticle( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitReticle( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitReticle( void )
 {
 
-	if(g_pVtxBufferReticle != NULL)	//’¸“_ƒoƒbƒtƒ@‚ÌƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^‚Ì‰ð•ú
+	if(g_pVtxBufferReticle != NULL)	//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿ã®è§£æ”¾
 	{
 		g_pVtxBufferReticle -> Release();
 		g_pVtxBufferReticle  = NULL;
@@ -159,7 +157,7 @@ void UninitReticle( void )
 
 
 
-	if( g_pTextureReticle != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureReticle != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 		g_pTextureReticle -> Release();
 		g_pTextureReticle = NULL;
@@ -169,27 +167,27 @@ void UninitReticle( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateReticle( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdateReticle( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateReticle( void )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
 
-	// ƒoƒbƒtƒ@‚ðƒƒbƒN‚µA‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾
+	// ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	g_pVtxBufferReticle -> Lock ( 0 , 0 , ( void** )&pVtx , 0 );
 
 
-	//	’¸“_‚Ì•ÏX
+	//	é ‚ç‚¹ã®å¤‰æ›´
 	VerTexReticle( pVtx );
 
 
-	g_pVtxBufferReticle -> Unlock(); //‚±‚êˆÈ~G‚ê‚Ä‚Í‚¢‚¯‚È‚¢
+	g_pVtxBufferReticle -> Unlock(); //ã“ã‚Œä»¥é™è§¦ã‚Œã¦ã¯ã„ã‘ãªã„
 
 
 	PLAYER *Player = GetPlayer();
@@ -197,7 +195,7 @@ void UpdateReticle( void )
 	if( GetKeyboardTrigger( DIK_SPACE ) )
 	{
 
-		//	’e‚ÌƒZƒbƒg
+		//	å¼¾ã®ã‚»ãƒƒãƒˆ
 		SetBullet( D3DXVECTOR3( g_Reticle.World.Pos.x , g_Reticle.World.Pos.y - 5.0f , g_Reticle.World.Pos.z ) , Player -> World.Rot , 50.0f );
 
 	}	//	end of if
@@ -205,43 +203,43 @@ void UpdateReticle( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawReticle( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawReticle( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawReticle( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	‹ts—ñ‚ ‚è‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+	//	é€†è¡Œåˆ—ã‚ã‚Šã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 	SetWorld( g_Reticle.World.Pos , g_Reticle.World.Rot , g_Reticle.World.Scl );
 	
 
-	//	ƒpƒCƒvƒ‰ƒCƒ“‚ÌƒXƒgƒŠ[ƒ€
+	//	ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferReticle , 0 , sizeof( VERTEX_3D ));
 
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌÝ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureReticle );
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ð—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , FALSE );
 
 
-	//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+	//	ãƒãƒªã‚´ãƒ³ã®æç”»
 	pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , 0 , NUM_POLYGON );
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ð—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , TRUE );
 
 
@@ -252,8 +250,8 @@ void DrawReticle( void )
 
 	char aStr[ 256 ] , aStr01[ 256 ];
 
-	sprintf( &aStr[ 0 ] , "ƒŒƒeƒBƒNƒ‹À•W : %.3f , %.3f , %.3f" , g_Reticle.World.Pos.x , g_Reticle.World.Pos.y , g_Reticle.World.Pos.z );
-	sprintf( &aStr01[ 0 ] , "ƒŒƒeƒBƒNƒ‹Šp“x : %.3f , %.3f , %.3f" , g_Reticle.World.Rot.x , g_Reticle.World.Rot.y , g_Reticle.World.Rot.z );
+	sprintf( &aStr[ 0 ] , "ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«åº§æ¨™ : %.3f , %.3f , %.3f" , g_Reticle.World.Pos.x , g_Reticle.World.Pos.y , g_Reticle.World.Pos.z );
+	sprintf( &aStr01[ 0 ] , "ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«è§’åº¦ : %.3f , %.3f , %.3f" , g_Reticle.World.Rot.x , g_Reticle.World.Rot.y , g_Reticle.World.Rot.z );
 
 	g_pFontReticle -> DrawText( NULL ,
 						&aStr[ 0 ] ,
@@ -275,20 +273,20 @@ void DrawReticle( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertexReticle( LPDIRECT3DDEVICE9 pDevice )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice	ƒfƒoƒCƒX
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertexReticle( LPDIRECT3DDEVICE9 pDevice )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice	ãƒ‡ãƒã‚¤ã‚¹
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜Ž:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexReticle( LPDIRECT3DDEVICE9 pDevice )
 {
 
-	// \‘¢‘Ì‚Ìƒ|ƒCƒ“ƒ^éŒ¾
+	// æ§‹é€ ä½“ã®ãƒã‚¤ãƒ³ã‚¿å®£è¨€
 	VERTEX_3D* pVtx;
 
 
-	// FAILEDƒ}ƒNƒ‚ÅƒGƒ‰[ƒ`ƒFƒbƒN
+	// FAILEDãƒžã‚¯ãƒ­ã§ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if ( FAILED ( pDevice -> CreateVertexBuffer ( sizeof ( VERTEX_3D ) * NUM_VERTEX , D3DUSAGE_WRITEONLY , FVF_VERTEX_2D , D3DPOOL_MANAGED , &g_pVtxBufferReticle , NULL ) ) )
 	{
 
@@ -297,36 +295,36 @@ HRESULT MakeVertexReticle( LPDIRECT3DDEVICE9 pDevice )
 	}	//	end of if
 
 
-	// ƒoƒbƒtƒ@‚ðƒƒbƒN‚µA‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾
+	// ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	g_pVtxBufferReticle -> Lock ( 0 , 0 , ( void** )&pVtx , 0 );
 
 
-	//	’¸“_À•W‚ÌÝ’è
+	//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].pos = D3DXVECTOR3( POLYGON_POS_X , POLYGON_POS_Y  , 0.0f );
 	pVtx[ 1 ].pos = D3DXVECTOR3( -POLYGON_POS_X  , POLYGON_POS_Y  , 0.0f );
 	pVtx[ 2 ].pos = D3DXVECTOR3( POLYGON_POS_X , -POLYGON_POS_Y , 0.0f );
 	pVtx[ 3 ].pos = D3DXVECTOR3( -POLYGON_POS_X  , -POLYGON_POS_Y , 0.0f );
 
-	//	–@ü‚ÌÝ’è
+	//	æ³•ç·šã®è¨­å®š
 	pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 	pVtx[ 1 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 	pVtx[ 2 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 	pVtx[ 3 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 
-	//	’¸“_F‚ÌÝ’è
+	//	é ‚ç‚¹è‰²ã®è¨­å®š
 	pVtx[ 0 ].color = D3DCOLOR_RGBA( 255 , 255 , 255 , 100 );
 	pVtx[ 1 ].color = D3DCOLOR_RGBA( 255 , 255 , 255 , 100 );
 	pVtx[ 2 ].color = D3DCOLOR_RGBA( 255 , 255 , 255 , 100 );
 	pVtx[ 3 ].color = D3DCOLOR_RGBA( 255 , 255 , 255 , 100 );
 
-	//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].tex = D3DXVECTOR2( 0 , 0 );
 	pVtx[ 1 ].tex = D3DXVECTOR2( 1 , 0 );
 	pVtx[ 2 ].tex = D3DXVECTOR2( 0 , 1 );
 	pVtx[ 3 ].tex = D3DXVECTOR2( 1 , 1 );
 
 
-	g_pVtxBufferReticle -> Unlock(); //‚±‚êˆÈ~G‚ê‚Ä‚Í‚¢‚¯‚È‚¢
+	g_pVtxBufferReticle -> Unlock(); //ã“ã‚Œä»¥é™è§¦ã‚Œã¦ã¯ã„ã‘ãªã„
 
 	return S_OK;
 
@@ -334,16 +332,16 @@ HRESULT MakeVertexReticle( LPDIRECT3DDEVICE9 pDevice )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void VerTexReticle( VERTEX_3D* pVtx )
- ˆø”:		VERTEX_3D* pVtx
- –ß‚è’l:	
- à–¾:		’¸“_‚Ì•ÏX
+ é–¢æ•°å:	void VerTexReticle( VERTEX_3D* pVtx )
+ å¼•æ•°:		VERTEX_3D* pVtx
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		é ‚ç‚¹ã®å¤‰æ›´
 -----------------------------------------------------------------------------*/
 void VerTexReticle( VERTEX_3D* pVtx )
 {
 
 
-	//	’¸“_F‚ÌÝ’è
+	//	é ‚ç‚¹è‰²ã®è¨­å®š
 	pVtx[ 0 ].color = D3DXCOLOR( g_Reticle.Color.r , g_Reticle.Color.g , g_Reticle.Color.b , g_Reticle.Color.a );
 	pVtx[ 1 ].color = D3DXCOLOR( g_Reticle.Color.r , g_Reticle.Color.g , g_Reticle.Color.b , g_Reticle.Color.a );
 	pVtx[ 2 ].color = D3DXCOLOR( g_Reticle.Color.r , g_Reticle.Color.g , g_Reticle.Color.b , g_Reticle.Color.a );
@@ -354,27 +352,27 @@ void VerTexReticle( VERTEX_3D* pVtx )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetReticle( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , D3DXCOLOR Color )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Rot		‰ñ“]—Ê
-			D3DXCOLOR Color		F
- –ß‚è’l:	
- à–¾:		ƒŒƒeƒBƒNƒ‹‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetReticle( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , D3DXCOLOR Color )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Rot		å›žè»¢é‡
+			D3DXCOLOR Color		è‰²
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetReticle( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , D3DXCOLOR Color )
 {
 
 	float rot = Rot.y + 180;
 
-	//	À•W
+	//	åº§æ¨™
 	g_Reticle.World.Pos.x = cosf( D3DXToRadian( Rot.x ) ) * sinf( D3DXToRadian( rot ) ) * g_Reticle.Length + Pos.x;
 	g_Reticle.World.Pos.y = sinf( D3DXToRadian( Rot.x ) ) * g_Reticle.Length + Pos.y;
 	g_Reticle.World.Pos.z = cosf( D3DXToRadian( Rot.x ) ) * cosf( D3DXToRadian( rot ) ) * g_Reticle.Length + Pos.z;
 
-	//	‰ñ“]—Ê
+	//	å›žè»¢é‡
 	g_Reticle.World.Rot = Rot;
 
-	//	F
+	//	è‰²
 	g_Reticle.Color = Color;
 
 }	//	end of func
