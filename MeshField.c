@@ -1,19 +1,17 @@
 /*=============================================================================
 
-		ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh[ MeshField.cpp ]
+		ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰[ MeshField.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìŽÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/11/09
 -------------------------------------------------------------------------------
-	¡@Update
+	â– ã€€Update
 		2016/11/02
 =============================================================================*/
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include "main.h"
@@ -21,121 +19,121 @@
 #include "fade.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/Field.jpg"
 
-#define MAX_FIELD ( 1 )	//	Å‘åƒtƒB[ƒ‹ƒh”
+#define MAX_FIELD ( 1 )	//	æœ€å¤§ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰æ•°
 
-#define FIELD00_WIDTH ( 100 )	//	‰¡‚Ì–‡”
-#define FIELD00_HEIGHT ( 100 )	//	c‚Ì–‡”
+#define FIELD00_WIDTH ( 100 )	//	æ¨ªã®æžšæ•°
+#define FIELD00_HEIGHT ( 100 )	//	ç¸¦ã®æžšæ•°
 
-#define ONE_SIZE ( 50 )	//	1•Ó‚Ì‘å‚«‚³
+#define ONE_SIZE ( 50 )	//	1è¾ºã®å¤§ãã•
 
-#define VERTEX ( ( ( 2 + 2 * FIELD00_WIDTH ) * FIELD00_HEIGHT + ( FIELD00_HEIGHT - 1 ) * 2 ) ) //	’¸“_”
+#define VERTEX ( ( ( 2 + 2 * FIELD00_WIDTH ) * FIELD00_HEIGHT + ( FIELD00_HEIGHT - 1 ) * 2 ) ) //	é ‚ç‚¹æ•°
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 typedef struct
 {
-	WORLD World;	//	ƒ[ƒ‹ƒh•ÏŠ·—p•Ï”
-	bool Use;	//	Žg—pƒtƒ‰ƒO
+	WORLD World;	//	ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ç”¨å¤‰æ•°
+	bool Use;	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 
 }MESHFIELD;
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Z );
 
-//	’¸“_‚Ì•ÏX
+//	é ‚ç‚¹ã®å¤‰æ›´
 void VerTexField( void );
 
-//	ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh‚ÌƒZƒbƒg
+//	ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ã‚»ãƒƒãƒˆ
 void SetField( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferField = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DINDEXBUFFER9 g_pIdxBufferField = NULL;	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ÌƒAƒhƒŒƒX
-LPDIRECT3DTEXTURE9 g_pTextureField = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferField = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DINDEXBUFFER9 g_pIdxBufferField = NULL;	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
+LPDIRECT3DTEXTURE9 g_pTextureField = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-MESHFIELD g_MeshField[ MAX_FIELD ];	//	ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh\‘¢‘Ì
+MESHFIELD g_MeshField[ MAX_FIELD ];	//	ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰æ§‹é€ ä½“
 
-float g_VSet;	//	VÀ•W
+float g_VSet;	//	Våº§æ¨™
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitMeshField( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitMeshField( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitMeshField( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureField  ) ) )
 	{
-		MessageBox( NULL , "[ MeshField.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚Ýž‚Ý‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ MeshField.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexMeshField( pDevice , FIELD00_WIDTH , FIELD00_HEIGHT , ONE_SIZE , ONE_SIZE );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_FIELD ; Cnt++ )
 	{
-		//	À•W
+		//	åº§æ¨™
 		g_MeshField[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§çŽ‡
 		g_MeshField[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›žè»¢é‡
 		g_MeshField[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Žg—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_MeshField[ Cnt ].Use = false;
 
 	}	//	end of for
 
 
-	//	•Ï”‰Šú‰»
+	//	å¤‰æ•°åˆæœŸåŒ–
 
-	//	VÀ•W
+	//	Våº§æ¨™
 	g_VSet = 0.0f;
 
 
-	//	ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh‚ÌƒZƒbƒg
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ã‚»ãƒƒãƒˆ
 	SetField( D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitMeshField( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitMeshField( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitMeshField( void )
 {
 
-	if( g_pVtxBufferField != NULL )	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pVtxBufferField != NULL )	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 
 		g_pVtxBufferField -> Release();
@@ -143,7 +141,7 @@ void UninitMeshField( void )
 
 	}	//	end of if
 
-	if( g_pIdxBufferField != NULL )	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pIdxBufferField != NULL )	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 
 		g_pIdxBufferField -> Release();
@@ -151,7 +149,7 @@ void UninitMeshField( void )
 
 	}	//	end of if
 
-	if( g_pTextureField != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureField != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 
 		g_pTextureField -> Release();
@@ -162,39 +160,39 @@ void UninitMeshField( void )
 }	//	end of func
  
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateMeshField( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdateMeshField( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateMeshField( void )
 {
 
-	//	ŽŸ‚Ìƒ‚[ƒh‚ÌŽæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *ModeNext = GetNextMode();
 
-	//	ƒ‚[ƒh‚ÌŽæ“¾
+	//	ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetMode();
 
 
 	if( *ModeNext == MODE_TITLE )
 	{
 
-		//	’¸“_‚Ì•ÏX
+		//	é ‚ç‚¹ã®å¤‰æ›´
 		VerTexField();
 
 
 		if( *Mode == MODE_RESULT )
 		{
 
-			//	VÀ•W‚ð‚¸‚ç‚·
+			//	Våº§æ¨™ã‚’ãšã‚‰ã™
 			g_VSet -= 0.07f;
 
 		}	//	end of if
 		else
 		{
 
-			//	VÀ•W‚ð‚¸‚ç‚·
+			//	Våº§æ¨™ã‚’ãšã‚‰ã™
 			g_VSet += 0.07f;
 
 		}	//	end of else
@@ -204,27 +202,27 @@ void UpdateMeshField( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawMeshField( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawMeshField( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawMeshField( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒpƒCƒvƒ‰ƒCƒ“‚ÌƒXƒgƒŠ[ƒ€
+	//	ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferField , 0 , sizeof( VERTEX_3D ));
 
 	pDevice -> SetIndices( g_pIdxBufferField );
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌÝ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureField );
 
 
@@ -234,10 +232,10 @@ void DrawMeshField( void )
 		if( g_MeshField[ Cnt ].Use == true )
 		{
 
-			//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorld( g_MeshField[ Cnt ].World.Pos , g_MeshField[ Cnt ].World.Rot , g_MeshField[ Cnt ].World.Scl );
 
-			//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+			//	ãƒãƒªã‚´ãƒ³ã®æç”»
 			pDevice -> DrawIndexedPrimitive( D3DPT_TRIANGLESTRIP , 0 , 0 , VERTEX , 0 , VERTEX - 2 );
 
 		}	//	end of if
@@ -247,22 +245,22 @@ void DrawMeshField( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Z )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice		ƒfƒoƒCƒX
-			UINT NumBlock_X					‰¡‚ÌƒuƒƒbƒN”
-			UINT NumBlock_Y					c‚ÌƒuƒƒbƒN”
-			float SizeBlock_X				XŽ²‚Ì‘å‚«‚³
-			float SizeBlock_Z				ZŽ²‚Ì‘å‚«‚³
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Z )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice		ãƒ‡ãƒã‚¤ã‚¹
+			UINT NumBlock_X					æ¨ªã®ãƒ–ãƒ­ãƒƒã‚¯æ•°
+			UINT NumBlock_Y					ç¸¦ã®ãƒ–ãƒ­ãƒƒã‚¯æ•°
+			float SizeBlock_X				Xè»¸ã®å¤§ãã•
+			float SizeBlock_Z				Zè»¸ã®å¤§ãã•
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜Ž:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Z )
 {
 
-	VERTEX_3D* pVtx;	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	VERTEX_3D* pVtx;	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 
-	WORD* pIdx;	//	ƒ|ƒCƒ“ƒ^•Ï”
+	WORD* pIdx;	//	ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 
 	HRESULT hr;
 
@@ -270,15 +268,15 @@ HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT 
 
 
 
-	//	’¸“_”‚ÌŒvŽZ
+	//	é ‚ç‚¹æ•°ã®è¨ˆç®—
 	int VerTex = ( NumBlock_X + 1 ) * ( NumBlock_Y + 1 );
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌŒvŽZ
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨ˆç®—
 	int IdxVerTex = ( 2 + 2 * NumBlock_X ) * NumBlock_Y + ( NumBlock_Y - 1 ) * 2;
 
 
-	//	’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	if( FAILED( pDevice -> CreateVertexBuffer( sizeof( VERTEX_3D ) * NUM_VERTEX * VerTex , D3DUSAGE_WRITEONLY , FVF_VERTEX_3D , D3DPOOL_MANAGED , &g_pVtxBufferField , NULL ) ) )
 	{
 
@@ -287,17 +285,17 @@ HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT 
 	}	//	end of if
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ì¶¬
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	hr = pDevice -> CreateIndexBuffer(
-		sizeof( WORD ) * IdxVerTex ,	//	ƒoƒbƒtƒ@—Ê
-		D3DUSAGE_WRITEONLY ,	//	Žg—p•û–@ƒtƒ‰ƒO
-		D3DFMT_INDEX16 , //	ƒCƒ“ƒfƒbƒNƒXƒtƒH[ƒ}ƒbƒg
-		D3DPOOL_MANAGED , //	ƒƒ‚ƒŠ‚ÌŠÇ—•û–@
-		&g_pIdxBufferField ,	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^[ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ÌƒAƒhƒŒƒX
+		sizeof( WORD ) * IdxVerTex ,	//	ãƒãƒƒãƒ•ã‚¡é‡
+		D3DUSAGE_WRITEONLY ,	//	ä½¿ç”¨æ–¹æ³•ãƒ•ãƒ©ã‚°
+		D3DFMT_INDEX16 , //	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
+		D3DPOOL_MANAGED , //	ãƒ¡ãƒ¢ãƒªã®ç®¡ç†æ–¹æ³•
+		&g_pIdxBufferField ,	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
 		NULL);
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( hr ) )
 	{
 
@@ -306,106 +304,106 @@ HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT 
 	}	//	end of if
 
 
-	//	ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferField -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
 
-	//	c
+	//	ç¸¦
 	for( UINT Cnt1 = 0 ; Cnt1 < NumBlock_Y + 1 ; Cnt1++ )
 	{
 
-		//	‰¡
+		//	æ¨ª
 		for( UINT Cnt2 = 0 ; Cnt2 < NumBlock_X + 1 ; Cnt2++ )
 		{
 
-			//	À•W‚ÌÝ’è
+			//	åº§æ¨™ã®è¨­å®š
 			Pos.x = ( SizeBlock_X * NumBlock_X / 2 ) - NumBlock_X * SizeBlock_X + ( SizeBlock_X * Cnt2 );
 			Pos.y = 0.0f;
 			Pos.z = ( SizeBlock_Z * NumBlock_Y / 2 ) - ( SizeBlock_Z * Cnt1 );
 
 
-			//	’¸“_À•W‚ÌÝ’è
+			//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 			pVtx[ 0 ].pos = D3DXVECTOR3( Pos.x , Pos.y , Pos.z );
 
 
-			//	–@ü‚ÌÝ’è
+			//	æ³•ç·šã®è¨­å®š
 			pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 1.0f , 0.0f );
 
 
-			//	’¸“_F‚ÌÝ’è
+			//	é ‚ç‚¹è‰²ã®è¨­å®š
 			pVtx[ 0 ].color = D3DCOLOR_RGBA( 255 , 255 , 255 , 255 );
 
 
-			//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 			pVtx[ 0 ].tex = D3DXVECTOR2( ( float )Cnt2 , ( float )Cnt1 );
 
 
-			pVtx ++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pVtx ++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of for
 
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferField -> Unlock();
 
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ðƒƒbƒN
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯
 	g_pIdxBufferField -> Lock( 0 , 0 , (void**)&pIdx , 0 );
 
 
-	//	c
+	//	ç¸¦
 	for( UINT Cnt1 = 0 ; Cnt1 < NumBlock_Y ; Cnt1++ )
 	{
 
-		//	‚Í‚¶‚ß‚¶‚á‚È‚©‚Á‚½‚ç
-		//	k‘Þƒ|ƒŠƒSƒ“
+		//	ã¯ã˜ã‚ã˜ã‚ƒãªã‹ã£ãŸã‚‰
+		//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 		if( Cnt1 != 0 )
 		{
 
-			//	1“_‘Å‚Â
+			//	1ç‚¹æ‰“ã¤
 			pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 
-			pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of if
 
-		//	2“_‘Å‚Â
+		//	2ç‚¹æ‰“ã¤
 		pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 		pIdx[ 1 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - ( NumBlock_X + 1 );
 
-		pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+		pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
-		//	‰¡
+		//	æ¨ª
 		for( UINT Cnt2 = 0 ; Cnt2 < NumBlock_X ; Cnt2++ )
 		{
 
-			//	2“_‘Å‚Â
+			//	2ç‚¹æ‰“ã¤
 			pIdx[ 0 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) + Cnt2;
 			pIdx[ 1 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) - ( NumBlock_X + 1 ) + Cnt2;
 
-			pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of for
 
-		//	ÅŒã‚¶‚á‚È‚©‚Á‚½‚ç
-		//	k‘Þƒ|ƒŠƒSƒ“
+		//	æœ€å¾Œã˜ã‚ƒãªã‹ã£ãŸã‚‰
+		//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 		if( Cnt1 != NumBlock_Y - 1 )
 		{
 
-			//	1“_‘Å‚Â
+			//	1ç‚¹æ‰“ã¤
 			pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - 1;
 
-			pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of if
 
 	}	//	end of for
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pIdxBufferField -> Unlock();
 
 	return S_OK;
@@ -413,51 +411,51 @@ HRESULT MakeVertexMeshField( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void VerTexField( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		’¸“_‚Ì•ÏX
+ é–¢æ•°å:	void VerTexField( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		é ‚ç‚¹ã®å¤‰æ›´
 -----------------------------------------------------------------------------*/
 void VerTexField( void )
 {
 
-	VERTEX_3D* pVtx;	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	VERTEX_3D* pVtx;	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 
 
-	//	ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferField -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
 
-	//	c
+	//	ç¸¦
 	for( UINT Cnt1 = 0 ; Cnt1 < FIELD00_HEIGHT + 1 ; Cnt1++ )
 	{
 
-		//	‰¡
+		//	æ¨ª
 		for( UINT Cnt2 = 0 ; Cnt2 < FIELD00_WIDTH + 1 ; Cnt2++ )
 		{
 
-			//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 			pVtx[ 0 ].tex = D3DXVECTOR2( ( float )Cnt2 , ( float )Cnt1 + g_VSet );
 
 
-			pVtx ++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pVtx ++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of for
 
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferField -> Unlock();
 
 }
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetField( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Rot		‰ñ“]—Ê
- –ß‚è’l:	
- à–¾:		ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetField( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Rot		å›žè»¢é‡
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetField( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 {
@@ -467,13 +465,13 @@ void SetField( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 		if( g_MeshField[ CntField ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			g_MeshField[ CntField ].World.Pos = Pos;
 
-			//	‰ñ“]—Ê
+			//	å›žè»¢é‡
 			g_MeshField[ CntField ].World.Rot = Rot;
 
-			//	Žg—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_MeshField[ CntField ].Use = true;
 
 			break;
