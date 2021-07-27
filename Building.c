@@ -1,95 +1,93 @@
 /*=============================================================================
 
-		Œš•¨[ Building.cpp ]
+		å»ºç‰©[ Building.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2017/01/19
 -------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include "main.h"
 #include "Building.h"
 #include "fade.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define MODEL_NAME "data/MODEL/Building/Saloon.x"
 
-#define MAX_MAT ( 5 )	//	ƒ‚ƒfƒ‹‚ÌÅ‘åƒ}ƒeƒŠƒAƒ‹”
+#define MAX_MAT ( 5 )	//	ãƒ¢ãƒ‡ãƒ«ã®æœ€å¤§ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	Œš•¨‚ÌƒZƒbƒg
+//	å»ºç‰©ã®ã‚»ãƒƒãƒˆ
 void SetBuilding( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPD3DXMESH g_pMeshBuilding;	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+LPD3DXMESH g_pMeshBuilding;	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 
-LPD3DXBUFFER g_pBufferMatBuilding;	//	ƒ}ƒeƒŠƒAƒ‹î•ñ
+LPD3DXBUFFER g_pBufferMatBuilding;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±
 
-DWORD g_nNumMatBuilding;	//	ƒ}ƒeƒŠƒAƒ‹”
+DWORD g_nNumMatBuilding;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
-LPDIRECT3DTEXTURE9 g_pTextureBuilding[ MAX_MAT ] = { NULL };//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DTEXTURE9 g_pTextureBuilding[ MAX_MAT ] = { NULL };//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-D3DXMATERIAL* pMatBuilding;	//	ƒ}ƒeƒŠƒAƒ‹ƒ|ƒCƒ“ƒ^
+D3DXMATERIAL* pMatBuilding;	//	ãƒãƒ†ãƒªã‚¢ãƒ«ãƒã‚¤ãƒ³ã‚¿
 
-BUILDING g_Building[ MAX_BUILDING ];	//	Œš•¨‚Ì\‘¢‘Ì
+BUILDING g_Building[ MAX_BUILDING ];	//	å»ºç‰©ã®æ§‹é€ ä½“
 
-float g_Move;	//	ˆÚ“®—Ê
+float g_Move;	//	ç§»å‹•é‡
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitBuilding( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitBuilding( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitBuilding( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
 	HRESULT hr;
 
-	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ƒtƒ@ƒCƒ‹–¼
+	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ãƒ•ã‚¡ã‚¤ãƒ«å
 							D3DXMESH_MANAGED,
-							pDevice,				//	ƒfƒoƒCƒX
-							NULL,					//	—×Úƒoƒbƒtƒ@
-							&g_pBufferMatBuilding,		//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚ğŠi”[
+							pDevice,				//	ãƒ‡ãƒã‚¤ã‚¹
+							NULL,					//	éš£æ¥ãƒãƒƒãƒ•ã‚¡
+							&g_pBufferMatBuilding,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’æ ¼ç´
 							NULL,
-							&g_nNumMatBuilding,		//	ƒ}ƒeƒŠƒAƒ‹”
-							&g_pMeshBuilding );		//	ƒƒbƒVƒ…
+							&g_nNumMatBuilding,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
+							&g_pMeshBuilding );		//	ãƒ¡ãƒƒã‚·ãƒ¥
 
-	//	ƒ‚ƒfƒ‹‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ¢ãƒ‡ãƒ«ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( hr ) )
 	{
 
-		MessageBox( NULL , "[ Building.cpp ]\n MODEL_NAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Building.cpp ]\n MODEL_NAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìƒ|ƒCƒ“ƒ^‚Æ‚µ‚Äƒoƒbƒtƒ@‚ÌƒAƒhƒŒƒX‚ğæ“¾
+	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®ãƒã‚¤ãƒ³ã‚¿ã¨ã—ã¦ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	pMatBuilding = ( D3DXMATERIAL* )g_pBufferMatBuilding -> GetBufferPointer();
 
 	for( int i = 0 ; i < ( int )g_nNumMatBuilding ; i++ )
@@ -97,11 +95,11 @@ void InitBuilding( void )
 		if( pMatBuilding[ i ].pTextureFilename != NULL )
 		{
 
-			//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 			if( FAILED( D3DXCreateTextureFromFile( pDevice , pMatBuilding[ i ].pTextureFilename , &g_pTextureBuilding[ i ]  ) ) )
 			{
 
-				MessageBox( NULL , "[ Building.cpp ]\n MODEL_NAME\n‚Ì‰æ‘œ‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+				MessageBox( NULL , "[ Building.cpp ]\n MODEL_NAME\nã®ç”»åƒã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 			}	//	end of if
 
@@ -110,36 +108,36 @@ void InitBuilding( void )
 	}	//	end of for
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_BUILDING ; Cnt++ )
 	{
 
-		//	À•W
+		//	åº§æ¨™
 		g_Building[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§ç‡
 		g_Building[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›è»¢é‡
 		g_Building[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	”¼Œa
+		//	åŠå¾„
 		g_Building[ Cnt ].Radius = 110.0f;
 
-		//	g—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_Building[ Cnt ].Use = false;
 
 	}	//	end of for
 
 
-	//	•Ï”‰Šú‰»
+	//	å¤‰æ•°åˆæœŸåŒ–
 	g_Move = 3.0f;
 
 
 
-	//	ƒZƒbƒg
+	//	ã‚»ãƒƒãƒˆ
 
-	//	‰Eã‚ÌŒš•¨
+	//	å³ä¸Šã®å»ºç‰©
 	SetBuilding( D3DXVECTOR3( 1000.0f , 0.0f, 300.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( 840.0f , 0.0f , 300.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( 680.0f , 0.0f , 300.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
@@ -152,7 +150,7 @@ void InitBuilding( void )
 	SetBuilding( D3DXVECTOR3( 340.0f , 0.0f , 1000.0f ) , D3DXVECTOR3( 0.0f , 90.0f , 0.0f ) );
 
 
-	//	¶ã‚ÌŒš•¨
+	//	å·¦ä¸Šã®å»ºç‰©
 	SetBuilding( D3DXVECTOR3( -1000.0f , 0.0f, 300.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( -840.0f , 0.0f , 300.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( -680.0f , 0.0f , 300.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
@@ -165,7 +163,7 @@ void InitBuilding( void )
 	SetBuilding( D3DXVECTOR3( -340.0f , 0.0f , 1000.0f ) , D3DXVECTOR3( 0.0f , -90.0f , 0.0f ) );
 
 
-	//	‰E‰º‚ÌŒš•¨
+	//	å³ä¸‹ã®å»ºç‰©
 	SetBuilding( D3DXVECTOR3( 1000.0f , 0.0f, -300.0f ) , D3DXVECTOR3( 0.0f , 180.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( 840.0f , 0.0f , -300.0f ) , D3DXVECTOR3( 0.0f , 180.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( 680.0f , 0.0f , -300.0f ) , D3DXVECTOR3( 0.0f , 180.0f , 0.0f ) );
@@ -178,7 +176,7 @@ void InitBuilding( void )
 	SetBuilding( D3DXVECTOR3( 340.0f , 0.0f , -1000.0f ) , D3DXVECTOR3( 0.0f , 90.0f , 0.0f ) );
 
 
-	//	¶‰º‚ÌŒš•¨
+	//	å·¦ä¸‹ã®å»ºç‰©
 	SetBuilding( D3DXVECTOR3( -1000.0f , 0.0f, -300.0f ) , D3DXVECTOR3( 0.0f , 180.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( -840.0f , 0.0f , -300.0f ) , D3DXVECTOR3( 0.0f , 180.0f , 0.0f ) );
 	SetBuilding( D3DXVECTOR3( -680.0f , 0.0f , -300.0f ) , D3DXVECTOR3( 0.0f , 180.0f , 0.0f ) );
@@ -193,15 +191,15 @@ void InitBuilding( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitBuilding( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitBuilding( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitBuilding( void )
 {
 
-	if( g_pMeshBuilding != NULL )	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+	if( g_pMeshBuilding != NULL )	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 	{
 
 		g_pMeshBuilding -> Release();
@@ -209,7 +207,7 @@ void UninitBuilding( void )
 
 	}	//	end of if
 
-	if( g_pBufferMatBuilding != NULL )	//	ƒ}ƒeƒŠƒAƒ‹î•ñŠJ•ú
+	if( g_pBufferMatBuilding != NULL )	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±é–‹æ”¾
 	{
 
 		g_pBufferMatBuilding -> Release();
@@ -221,15 +219,15 @@ void UninitBuilding( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateBuilding( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdateBuilding( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateBuilding( void )
 {
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetNextMode();
 
 
@@ -253,20 +251,20 @@ void UpdateBuilding( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawBuilding( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawBuilding( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawBuilding( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
 
-	//	Œ»İƒfƒoƒCƒX‚Éİ’è‚³‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìæ“¾
+	//	ç¾åœ¨ãƒ‡ãƒã‚¤ã‚¹ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®å–å¾—
 	D3DMATERIAL9 matDef;
 	pDevice -> GetMaterial( &matDef );
 
@@ -277,19 +275,19 @@ void DrawBuilding( void )
 		if( g_Building[ Cnt ].Use == true )
 		{
 
-			//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorld( g_Building[ Cnt ].World.Pos , g_Building[ Cnt ].World.Rot , g_Building[ Cnt ].World.Scl );
 
 			for( int i = 0 ; i < ( int )g_nNumMatBuilding ; i++ )
 			{
-				//	ƒfƒoƒCƒX‚Éƒ}ƒeƒŠƒAƒ‹‚ğİ’è
+				//	ãƒ‡ãƒã‚¤ã‚¹ã«ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¨­å®š
 				pDevice -> SetMaterial( &pMatBuilding[ i ].MatD3D );
 
-				//	ƒeƒNƒXƒ`ƒƒİ’è
+				//	ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 				pDevice -> SetTexture( 0 , g_pTextureBuilding[ i ] );
 
 
-				//	•`‰æ
+				//	æç”»
 				g_pMeshBuilding -> DrawSubset( i );
 
 			}	//	end of for
@@ -303,11 +301,11 @@ void DrawBuilding( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	SetBuilding( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Rot		‰ñ“]—Ê
- –ß‚è’l:	
- à–¾:		Œš•¨‚ÌƒZƒbƒg
+ é–¢æ•°å:	SetBuilding( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Rot		å›è»¢é‡
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		å»ºç‰©ã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetBuilding( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 {
@@ -318,13 +316,13 @@ void SetBuilding( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 		if( g_Building[ Cnt ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			g_Building[ Cnt ].World.Pos = Pos;
 
-			//	‰ñ“]
+			//	å›è»¢
 			g_Building[ Cnt ].World.Rot = Rot;
 
-			//	g—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_Building[ Cnt ].Use = true;
 
 			break;
@@ -336,10 +334,10 @@ void SetBuilding( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	BUILDING *GetBuilding( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		Œš•¨î•ñ‚Ìæ“¾
+ é–¢æ•°å:	BUILDING *GetBuilding( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		å»ºç‰©æƒ…å ±ã®å–å¾—
 -----------------------------------------------------------------------------*/
 BUILDING *GetBuilding( void )
 {
