@@ -1,123 +1,121 @@
 /*=============================================================================
 
-		”š”­[ explosin.cpp ]
+		çˆ†ç™º[ explosin.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìŽÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/12/13
 -------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include "main.h"
 #include "explosion.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/Explosin.png"
 
-#define MAX_EXPLOSION ( 100 )	//	”š”­Å‘å”
+#define MAX_EXPLOSION ( 100 )	//	çˆ†ç™ºæœ€å¤§æ•°
 
-#define MAX_TEX ( 8 )	//	‰½–‡‚ÌƒeƒNƒXƒ`ƒƒ‚ª‚ ‚é‚©
-#define MAX_TEX_X ( 4 )	//	‰¡‚ÌƒeƒNƒXƒ`ƒƒ‚ª‰½–‡‚ ‚é‚©
+#define MAX_TEX ( 8 )	//	ä½•æžšã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒã‚ã‚‹ã‹
+#define MAX_TEX_X ( 4 )	//	æ¨ªã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒä½•æžšã‚ã‚‹ã‹
 
-#define TEX_ONE_WIDTH ( 0.25f )	//	ˆê‚Â‚ÌƒeƒNƒXƒ`ƒƒ‚Ì‰¡•
-#define TEX_ONE_HEIGHT ( 0.5f )	//	ˆê‚Â‚ÌƒeƒNƒXƒ`ƒƒ‚Ìc•
+#define TEX_ONE_WIDTH ( 0.25f )	//	ä¸€ã¤ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®æ¨ªå¹…
+#define TEX_ONE_HEIGHT ( 0.5f )	//	ä¸€ã¤ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç¸¦å¹…
 
-#define TEX_WIDTH ( TEX_ONE_WIDTH * ( MAX_TEX_X - 1 ) )	//	ƒeƒNƒXƒ`ƒƒ‚Ì‰¡•
+#define TEX_WIDTH ( TEX_ONE_WIDTH * ( MAX_TEX_X - 1 ) )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®æ¨ªå¹…
 
-#define TEX_SPEED ( 5 )	//	ƒeƒNƒXƒ`ƒƒ‚Ì•`‰æƒXƒs[ƒh( ”’l‚ª0‚É‚È‚é‚É‚Â‚ê‚Ä•`‰æ‚ª‘¬‚­‚È‚é )
+#define TEX_SPEED ( 5 )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®æç”»ã‚¹ãƒ”ãƒ¼ãƒ‰( æ•°å€¤ãŒ0ã«ãªã‚‹ã«ã¤ã‚Œã¦æç”»ãŒé€Ÿããªã‚‹ )
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 typedef struct
 {
-	WORLD World;	//	ƒ[ƒ‹ƒh•ÏŠ·—p•Ï”
-	D3DXVECTOR2 UVSet;	//	UVÀ•W
-	int Frame;	//	ƒtƒŒ[ƒ€
-	float Radius;	//	”¼Œa
-	bool Use;	//	Žg—pƒtƒ‰ƒO
+	WORLD World;	//	ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ç”¨å¤‰æ•°
+	D3DXVECTOR2 UVSet;	//	UVåº§æ¨™
+	int Frame;	//	ãƒ•ãƒ¬ãƒ¼ãƒ 
+	float Radius;	//	åŠå¾„
+	bool Use;	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 
 }EXPLOSION;
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexExplosin( LPDIRECT3DDEVICE9 pDevice );
 
-//	”š”­‚ÌƒeƒNƒXƒ`ƒƒ•ÏX
+//	çˆ†ç™ºã®ãƒ†ã‚¯ã‚¹ãƒãƒ£å¤‰æ›´
 void VerTexExplosin( VERTEX_3D* pVtx , int Cnt );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferExplosin = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DTEXTURE9 g_pTextureExplosin = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferExplosin = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DTEXTURE9 g_pTextureExplosin = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-EXPLOSION g_Explosion[ MAX_EXPLOSION ];		//	”š”­\‘¢‘Ì
+EXPLOSION g_Explosion[ MAX_EXPLOSION ];		//	çˆ†ç™ºæ§‹é€ ä½“
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitExplosin( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		”š”­‚Ì‰Šú‰»
+ é–¢æ•°å:	void InitExplosin( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çˆ†ç™ºã®åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitExplosin( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureExplosin  ) ) )
 	{
-		MessageBox( NULL , "[ explosin.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚Ýž‚Ý‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ explosin.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexExplosin( pDevice );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_EXPLOSION ; Cnt++ )
 	{
-		//	À•W
+		//	åº§æ¨™
 		g_Explosion[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§çŽ‡
 		g_Explosion[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›žè»¢é‡
 		g_Explosion[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	ƒtƒŒ[ƒ€
+		//	ãƒ•ãƒ¬ãƒ¼ãƒ 
 		g_Explosion[ Cnt ].Frame = 0;
 
-		//	UÀ•W
+		//	Uåº§æ¨™
 		g_Explosion[ Cnt ].UVSet.x = 0.0f;
 
-		//	VÀ•W
+		//	Våº§æ¨™
 		g_Explosion[ Cnt ].UVSet.y = 0.0f;
 
-		//	”¼Œa
+		//	åŠå¾„
 		g_Explosion[ Cnt ].Radius = 0.0f;
 
-		//	Žg—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_Explosion[ Cnt ].Use = false;
 
 	}	//	end of for
@@ -125,22 +123,22 @@ void InitExplosin( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitExplosin( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		”š”­‚ÌI—¹
+ é–¢æ•°å:	void UninitExplosin( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çˆ†ç™ºã®çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitExplosin( void )
 {
 
-	if( g_pVtxBufferExplosin != NULL )	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pVtxBufferExplosin != NULL )	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 		g_pVtxBufferExplosin -> Release();
 		g_pVtxBufferExplosin = NULL;
 
 	}	//	end of if
 
-	if( g_pTextureExplosin != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureExplosin != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 		g_pTextureExplosin -> Release();
 		g_pTextureExplosin = NULL;
@@ -150,19 +148,19 @@ void UninitExplosin( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateExplosin( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		”š”­‚ÌXV
+ é–¢æ•°å:	void UpdateExplosin( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çˆ†ç™ºã®æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateExplosin( void )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
 
-	//	ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferExplosin -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
 
@@ -171,16 +169,16 @@ void UpdateExplosin( void )
 		if( g_Explosion[ Cnt ].Use == true )
 		{
 			
-			//	ƒtƒŒ[ƒ€‚ð‘‰Á
+			//	ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’å¢—åŠ 
 			g_Explosion[ Cnt ].Frame++;
 
 
-			//	ƒeƒNƒXƒ`ƒƒƒAƒjƒ[ƒVƒ‡ƒ“
-			g_Explosion[ Cnt ].UVSet.x = ( ( ( g_Explosion[ Cnt ].Frame / TEX_SPEED ) % MAX_TEX_X ) * TEX_ONE_WIDTH );	//	ã•”ƒeƒNƒXƒ`ƒƒ
-			g_Explosion[ Cnt ].UVSet.y = ( ( ( g_Explosion[ Cnt ].Frame / TEX_SPEED ) % MAX_TEX ) / MAX_TEX_X * TEX_ONE_HEIGHT );	//	‰º•”ƒeƒNƒXƒ`ƒƒ
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+			g_Explosion[ Cnt ].UVSet.x = ( ( ( g_Explosion[ Cnt ].Frame / TEX_SPEED ) % MAX_TEX_X ) * TEX_ONE_WIDTH );	//	ä¸Šéƒ¨ãƒ†ã‚¯ã‚¹ãƒãƒ£
+			g_Explosion[ Cnt ].UVSet.y = ( ( ( g_Explosion[ Cnt ].Frame / TEX_SPEED ) % MAX_TEX ) / MAX_TEX_X * TEX_ONE_HEIGHT );	//	ä¸‹éƒ¨ãƒ†ã‚¯ã‚¹ãƒãƒ£
 
 
-			//	ƒeƒNƒXƒ`ƒƒƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚ç
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ãŸã‚‰
 			if( g_Explosion[ Cnt ].UVSet.x == TEX_WIDTH && g_Explosion[ Cnt ].UVSet.y == TEX_ONE_HEIGHT )
 			{
 
@@ -189,7 +187,7 @@ void UpdateExplosin( void )
 			}	//	end of if
 
 
-			//	’¸“_‚Ì•ÏX
+			//	é ‚ç‚¹ã®å¤‰æ›´
 			VerTexExplosin( pVtx , Cnt );
 
 		}	//	end of if
@@ -197,40 +195,40 @@ void UpdateExplosin( void )
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferExplosin -> Unlock();
 
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawExplosin( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		’e‚Ì•`‰æ
+ é–¢æ•°å:	void DrawExplosin( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		å¼¾ã®æç”»
 -----------------------------------------------------------------------------*/
 void DrawExplosin( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒpƒCƒvƒ‰ƒCƒ“‚ÌƒXƒgƒŠ[ƒ€
+	//	ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferExplosin , 0 , sizeof( VERTEX_3D ));
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌÝ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureExplosin );
 
-	//	Zƒoƒbƒtƒ@
+	//	Zãƒãƒƒãƒ•ã‚¡
 	pDevice -> SetRenderState( D3DRS_ZENABLE , D3DZB_TRUE );
 	pDevice -> SetRenderState( D3DRS_ZWRITEENABLE , FALSE );
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ð—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , FALSE );
 
 
@@ -241,11 +239,11 @@ void DrawExplosin( void )
 		if( g_Explosion[ Cnt ].Use == true )
 		{
 
-			//	‹ts—ñ‚ ‚è‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ã‚ã‚Šã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorldInv( g_Explosion[ Cnt ].World.Pos , g_Explosion[ Cnt ].World.Rot , g_Explosion[ Cnt ].World.Scl );
 
 
-			//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+			//	ãƒãƒªã‚´ãƒ³ã®æç”»
 			pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , Cnt * NUM_VERTEX , NUM_POLYGON );
 
 		}	//	end of if
@@ -253,100 +251,100 @@ void DrawExplosin( void )
 	}	//	end of for
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ð—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , TRUE );
 
-	//	Œ³‚É–ß‚·
+	//	å…ƒã«æˆ»ã™
 	pDevice -> SetRenderState( D3DRS_ZENABLE , D3DZB_TRUE );
 	pDevice -> SetRenderState( D3DRS_ZWRITEENABLE , TRUE );
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertexExplosin( LPDIRECT3DDEVICE9 pDevice )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertexExplosin( LPDIRECT3DDEVICE9 pDevice )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜Ž:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexExplosin( LPDIRECT3DDEVICE9 pDevice )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
-	//	’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	if( FAILED( pDevice -> CreateVertexBuffer( sizeof( VERTEX_3D ) * NUM_VERTEX * MAX_EXPLOSION , D3DUSAGE_WRITEONLY , FVF_VERTEX_3D , D3DPOOL_MANAGED , &g_pVtxBufferExplosin , NULL ) ) )
 	{
 		return E_FAIL;
 	}	//	end of if
 
 
-	//	ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferExplosin -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
 
 	for( int Cnt = 0 ; Cnt < MAX_EXPLOSION ; Cnt++ )
 	{
 
-		//	’¸“_À•W‚ÌÝ’è
+		//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 1 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 2 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 3 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
 
-		//	–@ü‚ÌÝ’è
+		//	æ³•ç·šã®è¨­å®š
 		pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 1 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 2 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 3 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 
-		//	’¸“_F‚ÌÝ’è
+		//	é ‚ç‚¹è‰²ã®è¨­å®š
 		pVtx[ 0 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 1 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 2 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 3 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 
-		//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+		//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].tex = D3DXVECTOR2( 0 , 0 );
 		pVtx[ 1 ].tex = D3DXVECTOR2( 1 , 0 );
 		pVtx[ 2 ].tex = D3DXVECTOR2( 0 , 1 );
 		pVtx[ 3 ].tex = D3DXVECTOR2( 1 , 1 );
 
-		pVtx += 4;	//	pVtx‚ð‚¸‚ç‚·
+		pVtx += 4;	//	pVtxã‚’ãšã‚‰ã™
 
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferExplosin -> Unlock();
 
 	return S_OK;
 
 }	//	end of func
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void VerTexExplosin( VERTEX_3D* pVtx , int Cnt )
- ˆø”:		VERTEX_3D* pVtx		‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
-			int Cnt				”š”­\‘¢‘Ì‚ÌƒJƒEƒ“ƒ^
- –ß‚è’l:	
- à–¾:		’¸“_‚Ì•ÏX
+ é–¢æ•°å:	void VerTexExplosin( VERTEX_3D* pVtx , int Cnt )
+ å¼•æ•°:		VERTEX_3D* pVtx		ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
+			int Cnt				çˆ†ç™ºæ§‹é€ ä½“ã®ã‚«ã‚¦ãƒ³ã‚¿
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		é ‚ç‚¹ã®å¤‰æ›´
 -----------------------------------------------------------------------------*/
 void VerTexExplosin( VERTEX_3D* pVtx , int Cnt )
 {
 
-	//	pVtx‚ð‚¸‚ç‚·
+	//	pVtxã‚’ãšã‚‰ã™
 	pVtx += Cnt * NUM_VERTEX;
 
 
-	//	’¸“_À•W‚ÌÝ’è
+	//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].pos = D3DXVECTOR3( -g_Explosion[ Cnt ].Radius , g_Explosion[ Cnt ].Radius , 0.0f );
 	pVtx[ 1 ].pos = D3DXVECTOR3(  g_Explosion[ Cnt ].Radius , g_Explosion[ Cnt ].Radius , 0.0f );
 	pVtx[ 2 ].pos = D3DXVECTOR3( -g_Explosion[ Cnt ].Radius , -g_Explosion[ Cnt ].Radius , 0.0f );
 	pVtx[ 3 ].pos = D3DXVECTOR3(  g_Explosion[ Cnt ].Radius , -g_Explosion[ Cnt ].Radius , 0.0f );
 
 
-	//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].tex = D3DXVECTOR2( g_Explosion[ Cnt ].UVSet.x                 , g_Explosion[ Cnt ].UVSet.y );
 	pVtx[ 1 ].tex = D3DXVECTOR2( g_Explosion[ Cnt ].UVSet.x + TEX_ONE_WIDTH , g_Explosion[ Cnt ].UVSet.y );
 	pVtx[ 2 ].tex = D3DXVECTOR2( g_Explosion[ Cnt ].UVSet.x                 , g_Explosion[ Cnt ].UVSet.y + TEX_ONE_HEIGHT );
@@ -355,11 +353,11 @@ void VerTexExplosin( VERTEX_3D* pVtx , int Cnt )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetExplosin( D3DXVECTOR3 Pos , float Radius )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			float Radius		”¼Œa
- –ß‚è’l:	
- à–¾:		”š”­‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetExplosin( D3DXVECTOR3 Pos , float Radius )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			float Radius		åŠå¾„
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çˆ†ç™ºã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetExplosin( D3DXVECTOR3 Pos , float Radius )
 {
@@ -370,22 +368,22 @@ void SetExplosin( D3DXVECTOR3 Pos , float Radius )
 		if( g_Explosion[ Cnt ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			g_Explosion[ Cnt ].World.Pos = Pos;
 
-			//	ƒtƒŒ[ƒ€
+			//	ãƒ•ãƒ¬ãƒ¼ãƒ 
 			g_Explosion[ Cnt ].Frame = 0;
 
-			//	UÀ•W
+			//	Uåº§æ¨™
 			g_Explosion[ Cnt ].UVSet.x = 0.0f;
 
-			//	VÀ•W
+			//	Våº§æ¨™
 			g_Explosion[ Cnt ].UVSet.y = 0.0f;
 
-			//	”¼Œa
+			//	åŠå¾„
 			g_Explosion[ Cnt ].Radius = Radius;
 
-			//	Žg—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_Explosion[ Cnt ].Use = true;
 
 			break;
