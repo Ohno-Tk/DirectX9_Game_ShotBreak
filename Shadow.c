@@ -1,96 +1,94 @@
 /*=============================================================================
 
-		‰e[ Shadow.cpp ]
+		å½±[ Shadow.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/11/09
 -------------------------------------------------------------------------------
-	¡@Update
+	â– ã€€Update
 		2016/11/09
 =============================================================================*/
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include "main.h"
 #include "Shadow.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/shadow000.jpg"
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexShadow( LPDIRECT3DDEVICE9 pDevice );
 
-//	’¸“_‚Ì•ÏX
+//	é ‚ç‚¹ã®å¤‰æ›´
 void VerTexPos( VERTEX_3D* pVtx , int Cnt );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferShadow = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DTEXTURE9 g_pTextureShadow = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferShadow = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DTEXTURE9 g_pTextureShadow = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-SHADOW g_Shadow[ MAX_SHADOW ];	//	‰e\‘¢‘Ì
+SHADOW g_Shadow[ MAX_SHADOW ];	//	å½±æ§‹é€ ä½“
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitShadow( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitShadow( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitShadow( void )
 {
 	
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureShadow  ) ) )
 	{
 
-		MessageBox( NULL , "[ Shadow.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Shadow.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexShadow( pDevice );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_SHADOW ; Cnt++ )
 	{
-		//	À•W
+		//	åº§æ¨™
 		g_Shadow[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§ç‡
 		g_Shadow[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›è»¢é‡
 		g_Shadow[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	ƒJƒ‰[
+		//	ã‚«ãƒ©ãƒ¼
 		g_Shadow[ Cnt ].Color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 
-		//	g—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_Shadow[ Cnt ].Use = false;
 
 	}	//	end of for
@@ -98,15 +96,15 @@ void InitShadow( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitShadow( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitShadow( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitShadow( void )
 {
 
-	if(g_pVtxBufferShadow != NULL)	//’¸“_ƒoƒbƒtƒ@‚ÌƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^‚Ì‰ğ•ú
+	if(g_pVtxBufferShadow != NULL)	//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿ã®è§£æ”¾
 	{
 
 		g_pVtxBufferShadow -> Release();
@@ -114,7 +112,7 @@ void UninitShadow( void )
 
 	}	//	end of if
 
-	if( g_pTextureShadow != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureShadow != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 
 		g_pTextureShadow -> Release();
@@ -125,61 +123,61 @@ void UninitShadow( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdataShadow( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdataShadow( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateShadow( void )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
 
-	// ƒoƒbƒtƒ@‚ğƒƒbƒN‚µA‰¼‘zƒAƒhƒŒƒX‚ğæ“¾
+	// ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	g_pVtxBufferShadow -> Lock ( 0 , 0 ,( void** )&pVtx , 0 );
 
 
 	for( int Cnt = 0 ; Cnt < MAX_SHADOW ; Cnt++ )
 	{
 
-		//	’¸“_‚Ì•ÏX
+		//	é ‚ç‚¹ã®å¤‰æ›´
 		VerTexPos( pVtx , Cnt );
 
 
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferShadow -> Unlock();
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawShadow( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawShadow( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawShadow( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚Ìİ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
-	//	ƒXƒgƒŠ[ƒ€‚ğİ’è‚·‚é
+	//	ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’è¨­å®šã™ã‚‹
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferShadow , 0 , sizeof( VERTEX_3D ) );
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureShadow );
 
 
-	//	Œ¸Z‡¬
+	//	æ¸›ç®—åˆæˆ
 	pDevice -> SetRenderState( D3DRS_BLENDOP , D3DBLENDOP_REVSUBTRACT );
 	pDevice -> SetRenderState( D3DRS_SRCBLEND , D3DBLEND_SRCALPHA );
 	pDevice -> SetRenderState( D3DRS_DESTBLEND , D3DBLEND_ONE );
@@ -191,11 +189,11 @@ void DrawShadow( void )
 		if( g_Shadow[ Cnt ].Use == true )
 		{
 
-			//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorld( g_Shadow[ Cnt ].World.Pos , g_Shadow[ Cnt ].World.Rot , g_Shadow[ Cnt ].World.Scl );
 
 
-			//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+			//	ãƒãƒªã‚´ãƒ³ã®æç”»
 			pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , Cnt * NUM_VERTEX, NUM_POLYGON);
 
 		}	//	end of if
@@ -203,7 +201,7 @@ void DrawShadow( void )
 	}	//	end of for
 
 
-	//	Œ³‚É–ß‚·
+	//	å…ƒã«æˆ»ã™
 	pDevice -> SetRenderState( D3DRS_BLENDOP , D3DBLENDOP_ADD );
 	pDevice -> SetRenderState( D3DRS_SRCBLEND , D3DBLEND_SRCALPHA );
 	pDevice -> SetRenderState( D3DRS_DESTBLEND , D3DBLEND_INVSRCALPHA );
@@ -211,19 +209,19 @@ void DrawShadow( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertexShadow( LPDIRECT3DDEVICE9 pDevice )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice	ƒfƒoƒCƒX
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertexShadow( LPDIRECT3DDEVICE9 pDevice )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice	ãƒ‡ãƒã‚¤ã‚¹
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexShadow( LPDIRECT3DDEVICE9 pDevice )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
-	//	’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	if( FAILED( pDevice -> CreateVertexBuffer( sizeof( VERTEX_3D ) * NUM_VERTEX * MAX_SHADOW , D3DUSAGE_WRITEONLY , FVF_VERTEX_3D , D3DPOOL_MANAGED , &g_pVtxBufferShadow , NULL ) ) )
 	{
 
@@ -232,43 +230,43 @@ HRESULT MakeVertexShadow( LPDIRECT3DDEVICE9 pDevice )
 	}	//	end of if
 
 
-	// ƒoƒbƒtƒ@‚ğƒƒbƒN‚µA‰¼‘zƒAƒhƒŒƒX‚ğæ“¾
+	// ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	g_pVtxBufferShadow -> Lock( 0 , 0 ,( void** )&pVtx , 0 );
 
 
 	for( int Cnt = 0 ; Cnt < MAX_SHADOW ; Cnt++ )
 	{
-		//	’¸“_À•W‚Ìİ’è
+		//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 1 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 2 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 3 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	–@ü‚Ìİ’è
+		//	æ³•ç·šã®è¨­å®š
 		pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 1.0f , 0.0f );
 		pVtx[ 1 ].normal = D3DXVECTOR3( 0.0f , 1.0f , 0.0f );
 		pVtx[ 2 ].normal = D3DXVECTOR3( 0.0f , 1.0f , 0.0f );
 		pVtx[ 3 ].normal = D3DXVECTOR3( 0.0f , 1.0f , 0.0f );
 
-		//	’¸“_F‚Ìİ’è
+		//	é ‚ç‚¹è‰²ã®è¨­å®š
 		pVtx[ 0 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 1 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 2 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 3 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 
-		//	ƒeƒNƒXƒ`ƒƒÀ•W‚Ìİ’è
+		//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].tex = D3DXVECTOR2( 0 , 0 );
 		pVtx[ 1 ].tex = D3DXVECTOR2( 1 , 0 );
 		pVtx[ 2 ].tex = D3DXVECTOR2( 0 , 1 );
 		pVtx[ 3 ].tex = D3DXVECTOR2( 1 , 1 );
 
-		pVtx += 4;	//	pVtx‚ğ‚¸‚ç‚·
+		pVtx += 4;	//	pVtxã‚’ãšã‚‰ã™
 
 
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferShadow -> Unlock();
 
 	return S_OK;
@@ -276,27 +274,27 @@ HRESULT MakeVertexShadow( LPDIRECT3DDEVICE9 pDevice )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void VerTexPos( VERTEX_3D* pVtx , int Cnt )
- ˆø”:		VERTEX_3D* pVtx		‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
-			int Cnt				‰e\‘¢‘Ì‚ÌƒJƒEƒ“ƒ^
- –ß‚è’l:	
- à–¾:		’¸“_‚Ì•ÏX
+ é–¢æ•°å:	void VerTexPos( VERTEX_3D* pVtx , int Cnt )
+ å¼•æ•°:		VERTEX_3D* pVtx		ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
+			int Cnt				å½±æ§‹é€ ä½“ã®ã‚«ã‚¦ãƒ³ã‚¿
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		é ‚ç‚¹ã®å¤‰æ›´
 -----------------------------------------------------------------------------*/
 void VerTexPos( VERTEX_3D* pVtx , int Cnt )
 {
 
-	//	pVtx‚ğCnt•ª‚¸‚ç‚·
+	//	pVtxã‚’Cntåˆ†ãšã‚‰ã™
 	pVtx += Cnt * NUM_VERTEX;
 
 
-	//	’¸“_À•W‚Ìİ’è
+	//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].pos = D3DXVECTOR3(  g_Shadow[ Cnt ].Radius , 0.0f , -g_Shadow[ Cnt ].Radius );
 	pVtx[ 1 ].pos = D3DXVECTOR3( -g_Shadow[ Cnt ].Radius , 0.0f , -g_Shadow[ Cnt ].Radius );
 	pVtx[ 2 ].pos = D3DXVECTOR3(  g_Shadow[ Cnt ].Radius , 0.0f ,  g_Shadow[ Cnt ].Radius );
 	pVtx[ 3 ].pos = D3DXVECTOR3( -g_Shadow[ Cnt ].Radius , 0.0f ,  g_Shadow[ Cnt ].Radius );
 
 
-	//	’¸“_F‚Ìİ’è
+	//	é ‚ç‚¹è‰²ã®è¨­å®š
 	pVtx[ 0 ].color = D3DXCOLOR( g_Shadow[ Cnt ].Color.r , g_Shadow[ Cnt ].Color.g , g_Shadow[ Cnt ].Color.b , g_Shadow[ Cnt ].Color.a );
 	pVtx[ 1 ].color = D3DXCOLOR( g_Shadow[ Cnt ].Color.r , g_Shadow[ Cnt ].Color.g , g_Shadow[ Cnt ].Color.b , g_Shadow[ Cnt ].Color.a );
 	pVtx[ 2 ].color = D3DXCOLOR( g_Shadow[ Cnt ].Color.r , g_Shadow[ Cnt ].Color.g , g_Shadow[ Cnt ].Color.b , g_Shadow[ Cnt ].Color.a );
@@ -305,12 +303,12 @@ void VerTexPos( VERTEX_3D* pVtx , int Cnt )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetShadow( D3DXVECTOR3 Pos , float Radius , D3DXCOLOR Color )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			float Radius		”¼Œa
-			D3DXCOLOR Color		F
- –ß‚è’l:	
- à–¾:		‰e‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetShadow( D3DXVECTOR3 Pos , float Radius , D3DXCOLOR Color )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			float Radius		åŠå¾„
+			D3DXCOLOR Color		è‰²
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		å½±ã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetShadow( D3DXVECTOR3 Pos , float Radius , D3DXCOLOR Color )
 {
@@ -321,20 +319,20 @@ void SetShadow( D3DXVECTOR3 Pos , float Radius , D3DXCOLOR Color )
 		if( g_Shadow[ Cnt ].Use == false )
 		{
 			
-			//	À•W
+			//	åº§æ¨™
 			g_Shadow[ Cnt ].World.Pos.x = Pos.x;
 			g_Shadow[ Cnt ].World.Pos.z = Pos.z;
 
-			//	F
+			//	è‰²
 			g_Shadow[ Cnt ].Color.r = Color.r;
 			g_Shadow[ Cnt ].Color.g = Color.g;
 			g_Shadow[ Cnt ].Color.b = Color.b;
 			g_Shadow[ Cnt ].Color.a = Color.a;
 
-			//	”¼Œa
+			//	åŠå¾„
 			g_Shadow[ Cnt ].Radius = Radius;
 
-			//	g—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_Shadow[ Cnt ].Use = true;
 
 			break;
@@ -346,10 +344,10 @@ void SetShadow( D3DXVECTOR3 Pos , float Radius , D3DXCOLOR Color )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void IndexShadow( int Index )
- ˆø”:		int Index
- –ß‚è’l:	
- à–¾:		“Á’è‚Ì‰e‚Ìg—pƒtƒ‰ƒO‚ğOFF‚É‚·‚é
+ é–¢æ•°å:	void IndexShadow( int Index )
+ å¼•æ•°:		int Index
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ç‰¹å®šã®å½±ã®ä½¿ç”¨ãƒ•ãƒ©ã‚°ã‚’OFFã«ã™ã‚‹
 -----------------------------------------------------------------------------*/
 void IndexShadow( int Index )
 {
@@ -359,10 +357,10 @@ void IndexShadow( int Index )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	SHADOW *GetShadow( int Index )
- ˆø”:		int Index
- –ß‚è’l:	
- à–¾:		‰e‚Ìî•ñæ“¾
+ é–¢æ•°å:	SHADOW *GetShadow( int Index )
+ å¼•æ•°:		int Index
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		å½±ã®æƒ…å ±å–å¾—
 -----------------------------------------------------------------------------*/
 SHADOW *GetShadow( int Index )
 {
