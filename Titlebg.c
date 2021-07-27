@@ -1,145 +1,143 @@
 /*=============================================================================
 
-		ƒ^ƒCƒgƒ‹[ Titlebg.cpp ]
+		ã‚¿ã‚¤ãƒˆãƒ«[ Titlebg.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2017/01/06
 -------------------------------------------------------------------------------
-	¡@Update
+	â– ã€€Update
 =============================================================================*/
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include "main.h"
 #include "Titlebg.h"
 #include "fade.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/TITLE/ButtomRogo .png"
 #define POLYGON01_TEXTURENAME "data/TEXTURE/TITLE/Title.png"
 
-#define MAX_TEXTURE ( 2 )	//	Å‘åƒeƒNƒXƒ`ƒƒ”
+#define MAX_TEXTURE ( 2 )	//	æœ€å¤§ãƒ†ã‚¯ã‚¹ãƒãƒ£æ•°
 
-#define FADE_RATE ( 1.0f / 80 )	//	‚Ç‚Ì‚­‚ç‚¢‚ÅƒtƒF[ƒh‚³‚¹‚é‚Ì‚©
+#define FADE_RATE ( 1.0f / 80 )	//	ã©ã®ãã‚‰ã„ã§ãƒ•ã‚§ãƒ¼ãƒ‰ã•ã›ã‚‹ã®ã‹
 
-#define MIN_ALPHA ( 0.5f )	//	ƒ¿’l‚ÌÅ¬’l
+#define MIN_ALPHA ( 0.5f )	//	Î±å€¤ã®æœ€å°å€¤
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 typedef struct
 {
-	D3DXVECTOR2 Pos;	//	À•W
-	D3DXVECTOR2 Size;	//	‘å‚«‚³
-	D3DXCOLOR Color;	//	F
+	D3DXVECTOR2 Pos;	//	åº§æ¨™
+	D3DXVECTOR2 Size;	//	å¤§ãã•
+	D3DXCOLOR Color;	//	è‰²
 
 }TITLE;
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexTitle( LPDIRECT3DDEVICE9 pDevice );
 
-//	’¸“_‚Ì•ÏX
+//	é ‚ç‚¹ã®å¤‰æ›´
 void VerTexTitle( VERTEX_2D* pVtx , int Cnt );
 
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferTitle = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DTEXTURE9 g_pTextureTitle[ MAX_TEXTURE ] = { NULL };	//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferTitle = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DTEXTURE9 g_pTextureTitle[ MAX_TEXTURE ] = { NULL };	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-TITLE g_Title[ MAX_TEXTURE ];	//	ƒ^ƒCƒgƒ‹\‘¢‘Ìî•ñ
+TITLE g_Title[ MAX_TEXTURE ];	//	ã‚¿ã‚¤ãƒˆãƒ«æ§‹é€ ä½“æƒ…å ±
 
-FADE g_TitleFade;	//	ƒ^ƒCƒgƒ‹—ñ‹“
+FADE g_TitleFade;	//	ã‚¿ã‚¤ãƒˆãƒ«åˆ—æŒ™
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitTitleBg( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitTitleBg( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitTitleBg( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureTitle[ 0 ] ) ) )
 	{
 
-		MessageBox( NULL , "[ Titlebg.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Titlebg.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON01_TEXTURENAME , &g_pTextureTitle[ 1 ] ) ) )
 	{
 
-		MessageBox( NULL , "[ Titlebg.cpp ]\n POLYGON01_TEXTURENAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Titlebg.cpp ]\n POLYGON01_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexTitle( pDevice );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 
-	//	À•W
+	//	åº§æ¨™
 	g_Title[ 0 ].Pos = D3DXVECTOR2( SCREEN_WIDTH - 520.0f , SCREEN_HEIGHT * 0.8f );
 
-	//	‘å‚«‚³
+	//	å¤§ãã•
 	g_Title[ 0 ].Size = D3DXVECTOR2( 260.0f , 80.0f );
 
-	//	F
+	//	è‰²
 	g_Title[ 0 ].Color = D3DXCOLOR( 1.0f , 1.0f , 1.0f , 1.0f );
 
 
-	//	ƒ^ƒCƒgƒ‹ƒƒS
-	//	À•W
+	//	ã‚¿ã‚¤ãƒˆãƒ«ãƒ­ã‚´
+	//	åº§æ¨™
 	g_Title[ 1 ].Pos = D3DXVECTOR2( SCREEN_WIDTH * 0.2f , -10.0f );
 
-	//	‘å‚«‚³
+	//	å¤§ãã•
 	g_Title[ 1 ].Size = D3DXVECTOR2( 500.0f , 260.0f );
 
-	//	F
+	//	è‰²
 	g_Title[ 1 ].Color = D3DXCOLOR( 1.0f , 1.0f , 1.0f , 1.0f );
 
 
-	//	•Ï”‰Šú‰»
+	//	å¤‰æ•°åˆæœŸåŒ–
 	g_TitleFade = FADE_IN;
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitTitleBg( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitTitleBg( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitTitleBg( void )
 {
 
-	if(g_pVtxBufferTitle != NULL)	//’¸“_ƒoƒbƒtƒ@‚ÌƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^‚Ì‰ğ•ú
+	if(g_pVtxBufferTitle != NULL)	//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿ã®è§£æ”¾
 	{
 
 		g_pVtxBufferTitle -> Release();
@@ -151,7 +149,7 @@ void UninitTitleBg( void )
 	for( int Cnt = 0 ; Cnt < MAX_TEXTURE ; Cnt++ )
 	{
 
-		if( g_pTextureTitle[ Cnt ] != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+		if( g_pTextureTitle[ Cnt ] != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 		{
 
 			g_pTextureTitle[ Cnt ] -> Release();
@@ -164,40 +162,40 @@ void UninitTitleBg( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateTitleBg( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdateTitleBg( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateTitleBg( void )
 {
 
-	// ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	// ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_2D* pVtx;
 
 
-	//ƒoƒbƒtƒ@‚ğƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚é
+	//ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferTitle -> Lock( 0 , 0 ,	( void** )&pVtx , 0 );
 
 
 	for( int Cnt = 0 ; Cnt < MAX_TEXTURE ; Cnt++ )
 	{
 
-		//	’¸“_‚Ì•ÏX
+		//	é ‚ç‚¹ã®å¤‰æ›´
 		VerTexTitle( pVtx , Cnt );
 
 	}	//	end of for
 
 
-	g_pVtxBufferTitle -> Unlock(); //‚±‚êˆÈ~G‚ê‚Ä‚Í‚¢‚¯‚È‚¢
+	g_pVtxBufferTitle -> Unlock(); //ã“ã‚Œä»¥é™è§¦ã‚Œã¦ã¯ã„ã‘ãªã„
 
 
-	if( g_TitleFade == FADE_IN )	//	ƒtƒF[ƒhƒCƒ“‚Ìˆ—
+	if( g_TitleFade == FADE_IN )	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³æ™‚ã®å‡¦ç†
 	{
 
-		g_Title[ 0 ].Color.a -= FADE_RATE;	//	a’l‚ğŒ¸Z‚µ‚ÄŒã‚ë‚Ì‰æ–Ê‚ğ•‚‚©‚Ñã‚ª‚ç‚¹‚é
+		g_Title[ 0 ].Color.a -= FADE_RATE;	//	aå€¤ã‚’æ¸›ç®—ã—ã¦å¾Œã‚ã®ç”»é¢ã‚’æµ®ã‹ã³ä¸ŠãŒã‚‰ã›ã‚‹
 
-		//	ƒtƒF[ƒhƒCƒ“‚ÌI—¹
+		//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³ã®çµ‚äº†
 		if( g_Title[ 0 ].Color.a < MIN_ALPHA )
 		{
 
@@ -208,17 +206,17 @@ void UpdateTitleBg( void )
 
 	}	//	end of if
 
-	else if( g_TitleFade == FADE_OUT )	//	ƒtƒF[ƒhƒAƒEƒg‚Ìˆ—
+	else if( g_TitleFade == FADE_OUT )	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆæ™‚ã®å‡¦ç†
 	{
 
-		g_Title[ 0 ].Color.a += FADE_RATE;	//	a’l‚ğ‰ÁZ‚µ‚ÄŒã‚ë‚Ì‰æ–Ê‚ğÁ‚µ‚Ä‚¢‚­
+		g_Title[ 0 ].Color.a += FADE_RATE;	//	aå€¤ã‚’åŠ ç®—ã—ã¦å¾Œã‚ã®ç”»é¢ã‚’æ¶ˆã—ã¦ã„ã
 
-		//	ƒtƒF[ƒhƒAƒEƒg‚ÌI—¹
+		//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã®çµ‚äº†
 		if( g_Title[ 0 ].Color.a > 1.0f )
 		{
 
 			g_Title[ 0 ].Color.a = 1.0f;
-			g_TitleFade = FADE_IN;	//	ƒtƒF[ƒhƒCƒ“‚Éˆ—‚ÌØ‚è‘Ö‚¦
+			g_TitleFade = FADE_IN;	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³ã«å‡¦ç†ã®åˆ‡ã‚Šæ›¿ãˆ
 
 		}	//	end of if
 
@@ -228,53 +226,53 @@ void UpdateTitleBg( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawTitleBg( void )
- ˆø”:		‚È‚µ
- –ß‚è’l:	‚È‚µ
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawTitleBg( void )
+ å¼•æ•°:		ãªã—
+ æˆ»ã‚Šå€¤:	ãªã—
+ èª¬æ˜:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawTitleBg( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚Ìİ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_2D );
 
-	//	ƒXƒgƒŠ[ƒ€‚ğİ’è‚·‚é
+	//	ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’è¨­å®šã™ã‚‹
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferTitle , 0 , sizeof( VERTEX_2D ) );
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureTitle[ 0 ] );
 
-	//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+	//	ãƒãƒªã‚´ãƒ³ã®æç”»
 	pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , 0 , NUM_POLYGON);
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureTitle[ 1 ] );
 
-	//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+	//	ãƒãƒªã‚´ãƒ³ã®æç”»
 	pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , 4 , NUM_POLYGON);
 
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertexTitle( LPDIRECT3DDEVICE9 pDevice )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice	ƒfƒoƒCƒX
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertexTitle( LPDIRECT3DDEVICE9 pDevice )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice	ãƒ‡ãƒã‚¤ã‚¹
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexTitle( LPDIRECT3DDEVICE9 pDevice )
 {
 
-	// ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	// ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_2D* pVtx;
 
 
-	// FAILEDƒ}ƒNƒ‚ÅƒGƒ‰[ƒ`ƒFƒbƒN
+	// FAILEDãƒã‚¯ãƒ­ã§ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if ( FAILED ( pDevice -> CreateVertexBuffer ( sizeof ( VERTEX_2D ) * NUM_VERTEX * MAX_TEXTURE , D3DUSAGE_WRITEONLY , FVF_VERTEX_2D , D3DPOOL_MANAGED , &g_pVtxBufferTitle , NULL ) ) )
 	{
 
@@ -283,46 +281,46 @@ HRESULT MakeVertexTitle( LPDIRECT3DDEVICE9 pDevice )
 	}	//	end of if
 
 
-	//ƒoƒbƒtƒ@‚ğƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚é
+	//ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferTitle -> Lock( 0 , 0 ,	( void** )&pVtx , 0 );
 
 
 	for( int Cnt = 0 ; Cnt < MAX_TEXTURE ; Cnt++ )
 	{
 
-		//	’¸“_À•W‚Ìİ’è
+		//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 1 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 2 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 3 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
 
-		//	À•W•ÏŠ·Ï‚İ’¸“_ƒtƒ‰ƒO‚Ìİ’è
+		//	åº§æ¨™å¤‰æ›æ¸ˆã¿é ‚ç‚¹ãƒ•ãƒ©ã‚°ã®è¨­å®š
 		pVtx[ 0 ].rhw = 1.0f;
 		pVtx[ 1 ].rhw = 1.0f;
 		pVtx[ 2 ].rhw = 1.0f;
 		pVtx[ 3 ].rhw = 1.0f;
 
 
-		//	’¸“_F‚Ìİ’è
+		//	é ‚ç‚¹è‰²ã®è¨­å®š
 		pVtx[ 0 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 1 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 2 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 3 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 
 
-		//	ƒeƒNƒXƒ`ƒƒÀ•W‚Ìİ’è
+		//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].tex = D3DXVECTOR2( 0 , 0 );
 		pVtx[ 1 ].tex = D3DXVECTOR2( 1 , 0 );
 		pVtx[ 2 ].tex = D3DXVECTOR2( 0 , 1 );
 		pVtx[ 3 ].tex = D3DXVECTOR2( 1 , 1 );
 
-		pVtx += 4;	//	pVtx‚ğ‚¸‚ç‚·
+		pVtx += 4;	//	pVtxã‚’ãšã‚‰ã™
 
 	}	//	end of for
 
 
-	g_pVtxBufferTitle -> Unlock(); //‚±‚êˆÈ~G‚ê‚Ä‚Í‚¢‚¯‚È‚¢
+	g_pVtxBufferTitle -> Unlock(); //ã“ã‚Œä»¥é™è§¦ã‚Œã¦ã¯ã„ã‘ãªã„
 
 
 	return S_OK;
@@ -331,26 +329,26 @@ HRESULT MakeVertexTitle( LPDIRECT3DDEVICE9 pDevice )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void VerTexTitle( VERTEX_2D* pVtx , int Cnt )
- ˆø”:		VERTEX_2D* pVtx		‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
-			int Cnt				ƒJƒEƒ“ƒ^
- –ß‚è’l:	
- à–¾:		’¸“_‚Ì•ÏX
+ é–¢æ•°å:	void VerTexTitle( VERTEX_2D* pVtx , int Cnt )
+ å¼•æ•°:		VERTEX_2D* pVtx		ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
+			int Cnt				ã‚«ã‚¦ãƒ³ã‚¿
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		é ‚ç‚¹ã®å¤‰æ›´
 -----------------------------------------------------------------------------*/
 void VerTexTitle( VERTEX_2D* pVtx , int Cnt )
 {
 
-	//	pVtx‚ğCnt•ª‚¸‚ç‚·
+	//	pVtxã‚’Cntåˆ†ãšã‚‰ã™
 	pVtx += Cnt * NUM_VERTEX;
 
 
-	//	’¸“_À•W‚Ìİ’è
+	//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].pos = D3DXVECTOR3( g_Title[ Cnt ].Pos.x                         , g_Title[ Cnt ].Pos.y                         , 0.0f );
 	pVtx[ 1 ].pos = D3DXVECTOR3( g_Title[ Cnt ].Pos.x + g_Title[ Cnt ].Size.x , g_Title[ Cnt ].Pos.y                         , 0.0f );
 	pVtx[ 2 ].pos = D3DXVECTOR3( g_Title[ Cnt ].Pos.x                         , g_Title[ Cnt ].Pos.y + g_Title[ Cnt ].Size.y , 0.0f );
 	pVtx[ 3 ].pos = D3DXVECTOR3( g_Title[ Cnt ].Pos.x + g_Title[ Cnt ].Size.x , g_Title[ Cnt ].Pos.y + g_Title[ Cnt ].Size.y , 0.0f );
 
-	//	’¸“_F‚Ìİ’è
+	//	é ‚ç‚¹è‰²ã®è¨­å®š
 	pVtx[ 0 ].color = D3DXCOLOR( g_Title[ Cnt ].Color.r , g_Title[ Cnt ].Color.g , g_Title[ Cnt ].Color.b , g_Title[ Cnt ].Color.a );
 	pVtx[ 1 ].color = D3DXCOLOR( g_Title[ Cnt ].Color.r , g_Title[ Cnt ].Color.g , g_Title[ Cnt ].Color.b , g_Title[ Cnt ].Color.a );
 	pVtx[ 2 ].color = D3DXCOLOR( g_Title[ Cnt ].Color.r , g_Title[ Cnt ].Color.g , g_Title[ Cnt ].Color.b , g_Title[ Cnt ].Color.a );
