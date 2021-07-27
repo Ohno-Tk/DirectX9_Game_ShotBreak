@@ -1,22 +1,20 @@
 /*=============================================================================
 
-		ƒvƒŒƒCƒ„[[ Player.cpp ]
+		ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼[ Player.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/12/29
 -------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-						scanf ‚Ìwarning–h~ 
+						scanf ã®warningé˜²æ­¢ 
 -----------------------------------------------------------------------------*/
 #define _CRT_SECURE_NO_WARNINGS
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include "main.h"
@@ -32,48 +30,48 @@
 #include "Utility.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define MODEL_NAME "data/MODEL/Player/CowBoy.x"
 
-#define MAX_MAT ( 8 )	//	ƒ‚ƒfƒ‹‚ÌÅ‘åƒ}ƒeƒŠƒAƒ‹”
+#define MAX_MAT ( 8 )	//	ãƒ¢ãƒ‡ãƒ«ã®æœ€å¤§ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
-#define ROT_SPEED ( 1.5f )	//	‰ñ“]—Ê
+#define ROT_SPEED ( 1.5f )	//	å›è»¢é‡
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	ƒL[ƒ{[ƒh‚Å‚Ì‘€ì
+//	ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ã®æ“ä½œ
 void KeyboardOperate( void );
 
-//	•¨‘Ì‚Æ‚Ì“–‚½‚è”»’è
+//	ç‰©ä½“ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 void CollisionObject( void );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPD3DXMESH g_pMeshPlayer;	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+LPD3DXMESH g_pMeshPlayer;	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 
-LPD3DXBUFFER g_pBufferMatPlayer;	//	ƒ}ƒeƒŠƒAƒ‹î•ñ
+LPD3DXBUFFER g_pBufferMatPlayer;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±
 
-DWORD g_nNumMatPlayer;	//	ƒ}ƒeƒŠƒAƒ‹”
+DWORD g_nNumMatPlayer;	//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
 
-LPDIRECT3DTEXTURE9 g_pTexturePlayer[ MAX_MAT ] = { NULL };//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DTEXTURE9 g_pTexturePlayer[ MAX_MAT ] = { NULL };//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-D3DXMATERIAL* pMatPlayer;	//	ƒ}ƒeƒŠƒAƒ‹ƒ|ƒCƒ“ƒ^
+D3DXMATERIAL* pMatPlayer;	//	ãƒãƒ†ãƒªã‚¢ãƒ«ãƒã‚¤ãƒ³ã‚¿
 
-LPD3DXFONT g_pFontPlayer = NULL;	//	ƒtƒHƒ“ƒgƒ|ƒCƒ“ƒ^
+LPD3DXFONT g_pFontPlayer = NULL;	//	ãƒ•ã‚©ãƒ³ãƒˆãƒã‚¤ãƒ³ã‚¿
 
-PLAYER g_Player;	//	ƒvƒŒƒCƒ„[\‘¢‘Ì
+PLAYER g_Player;	//	ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ§‹é€ ä½“
 
 #ifdef _DEBUG
 
@@ -82,42 +80,42 @@ PLAYER g_Player;	//	ƒvƒŒƒCƒ„[\‘¢‘Ì
 #endif	//	_DEBUG
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitPlayer( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitPlayer( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitPlayer( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetNextMode();
 
 
 	HRESULT hr;
 
-	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ƒtƒ@ƒCƒ‹–¼
+	hr = D3DXLoadMeshFromX( MODEL_NAME ,			//	ãƒ•ã‚¡ã‚¤ãƒ«å
 							D3DXMESH_MANAGED,
-							pDevice,				//	ƒfƒoƒCƒX
-							NULL,					//	—×Úƒoƒbƒtƒ@
-							&g_pBufferMatPlayer,		//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚ğŠi”[
+							pDevice,				//	ãƒ‡ãƒã‚¤ã‚¹
+							NULL,					//	éš£æ¥ãƒãƒƒãƒ•ã‚¡
+							&g_pBufferMatPlayer,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’æ ¼ç´
 							NULL,
-							&g_nNumMatPlayer,		//	ƒ}ƒeƒŠƒAƒ‹”
-							&g_pMeshPlayer );		//	ƒƒbƒVƒ…
+							&g_nNumMatPlayer,		//	ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
+							&g_pMeshPlayer );		//	ãƒ¡ãƒƒã‚·ãƒ¥
 
-	//	ƒ‚ƒfƒ‹‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ¢ãƒ‡ãƒ«ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( hr ) )
 	{
 
-		MessageBox( NULL , "[ Player.cpp ]\n MODEL_NAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Player.cpp ]\n MODEL_NAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	ƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìƒ|ƒCƒ“ƒ^‚Æ‚µ‚Äƒoƒbƒtƒ@‚ÌƒAƒhƒŒƒX‚ğæ“¾
+	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®ãƒã‚¤ãƒ³ã‚¿ã¨ã—ã¦ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	pMatPlayer = ( D3DXMATERIAL* )g_pBufferMatPlayer -> GetBufferPointer();
 
 	for( int i = 0 ; i < ( int )g_nNumMatPlayer ; i++ )
@@ -125,10 +123,10 @@ void InitPlayer( void )
 		if( pMatPlayer[ i ].pTextureFilename != NULL )
 		{
 
-			//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 			if( FAILED( D3DXCreateTextureFromFile( pDevice , pMatPlayer[ i ].pTextureFilename , &g_pTexturePlayer[ i ]  ) ) )
 			{
-				MessageBox( NULL , "ƒ‚ƒfƒ‹‚Ì‰æ‘œ‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+				MessageBox( NULL , "ãƒ¢ãƒ‡ãƒ«ã®ç”»åƒã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 			}	//	end of if
 
@@ -138,15 +136,15 @@ void InitPlayer( void )
 
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 
 	if( *Mode == MODE_TITLE )
 	{
 
-		//	À•W
+		//	åº§æ¨™
 		g_Player.World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 60.0f );
 
-		//	‰ñ“]—Ê
+		//	å›è»¢é‡
 		g_Player.World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
 	}	//	end of if
@@ -154,45 +152,45 @@ void InitPlayer( void )
 	else if( *Mode == MODE_GAME )
 	{
 
-		//	À•W
+		//	åº§æ¨™
 		g_Player.World.Pos = D3DXVECTOR3( 0.0f , 0.0f , -1000.0f );
 
-		//	‰ñ“]—Ê
+		//	å›è»¢é‡
 		g_Player.World.Rot = D3DXVECTOR3( 0.0f , 180.0f , 0.0f );
 
 	}	//	end of else if
 
-	//	Šg‘å—¦
+	//	æ‹¡å¤§ç‡
 	g_Player.World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-	//	‘O‚ÌÀ•W
+	//	å‰ã®åº§æ¨™
 	g_Player.OldPos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-	//	ˆÚ“®—Ê
+	//	ç§»å‹•é‡
 	g_Player.Move = D3DXVECTOR3( 5.0f , 5.0f , 5.0f );
 
-	//	‰ñ“]—Ê
+	//	å›è»¢é‡
 	g_Player.RotSpeed = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-	//	”¼Œa
+	//	åŠå¾„
 	g_Player.Radius = 5.0f;
 
-	//	g—pƒtƒ‰ƒO
+	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 	g_Player.Use = true;
 
 
-	//	‰e‚ÌƒZƒbƒg
+	//	å½±ã®ã‚»ãƒƒãƒˆ
 	SetShadow( g_Player.World.Pos , 15.0f , D3DXCOLOR( 1.0f , 1.0f , 1.0f , 1.0f ) );
 
 
 #ifdef _DEBUG
-	//	ƒtƒHƒ“ƒg‚Ìİ’è
+	//	ãƒ•ã‚©ãƒ³ãƒˆã®è¨­å®š
 	D3DXCreateFont( pDevice ,
-				18 ,	//	•¶š‚‚³
-				0 ,	//	•¶š•
-				0 ,	//	•¶š‚Ì‘¾‚³
-				0 ,	//	ƒ~ƒbƒvƒ}ƒbƒv
-				FALSE ,	//	ƒCƒ^ƒŠƒbƒN
+				18 ,	//	æ–‡å­—é«˜ã•
+				0 ,	//	æ–‡å­—å¹…
+				0 ,	//	æ–‡å­—ã®å¤ªã•
+				0 ,	//	ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—
+				FALSE ,	//	ã‚¤ã‚¿ãƒªãƒƒã‚¯
 				SHIFTJIS_CHARSET ,
 				OUT_DEFAULT_PRECIS ,
 				DEFAULT_QUALITY ,
@@ -205,15 +203,15 @@ void InitPlayer( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitPlayer( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitPlayer( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitPlayer( void )
 {
 
-	if( g_pMeshPlayer != NULL )	//	ƒƒbƒVƒ…ƒCƒ“ƒ^[ƒtƒF[ƒXƒ|ƒCƒ“ƒ^
+	if( g_pMeshPlayer != NULL )	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒã‚¤ãƒ³ã‚¿
 	{
 
 		g_pMeshPlayer -> Release();
@@ -221,7 +219,7 @@ void UninitPlayer( void )
 
 	}	//	end of if
 
-	if( g_pBufferMatPlayer != NULL )	//	ƒ}ƒeƒŠƒAƒ‹î•ñŠJ•ú
+	if( g_pBufferMatPlayer != NULL )	//	ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±é–‹æ”¾
 	{
 
 		g_pBufferMatPlayer -> Release();
@@ -232,36 +230,36 @@ void UninitPlayer( void )
 }	//	end of func
  
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdataPlayer( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdataPlayer( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdatePlayer( void )
 {
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *Mode = GetNextMode();
 
 
 	if( *Mode == MODE_GAME )
 	{
 
-		//	‘O‰ñ‚ÌÀ•W‚ğæ“¾
+		//	å‰å›ã®åº§æ¨™ã‚’å–å¾—
 		g_Player.OldPos = g_Player.World.Pos;
 
 
-		//	ƒL[ƒ{[ƒh‚Å‚Ì‘€ì
+		//	ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ã®æ“ä½œ
 		KeyboardOperate();
 
-		//	•¨‘Ì‚Æ‚Ì“–‚½‚è”»’è
+		//	ç‰©ä½“ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 		CollisionObject();
 
 
-		//	ƒJƒƒ‰‚ÌƒZƒbƒg
+		//	ã‚«ãƒ¡ãƒ©ã®ã‚»ãƒƒãƒˆ
 		SetCamera( g_Player.World.Pos , g_Player.World.Rot , g_Player.Move );
 
-		//	ƒŒƒeƒBƒNƒ‹‚ÌƒZƒbƒg
+		//	ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®ã‚»ãƒƒãƒˆ
 		SetReticle( D3DXVECTOR3( g_Player.World.Pos.x , g_Player.World.Pos.y + 25.0f , g_Player.World.Pos.z ) , g_Player.World.Rot , D3DXCOLOR( 0.0f , 1.0f , 0.0f , 1.0f ) );
 
 	}	//	end of if
@@ -270,19 +268,19 @@ void UpdatePlayer( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawPlayer( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		ƒ‚ƒfƒ‹‚Ì•`‰æ
+ é–¢æ•°å:	void DrawPlayer( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ãƒ¢ãƒ‡ãƒ«ã®æç”»
 -----------------------------------------------------------------------------*/
 void DrawPlayer( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	Œ»İƒfƒoƒCƒX‚Éİ’è‚³‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹î•ñ‚Ìæ“¾
+	//	ç¾åœ¨ãƒ‡ãƒã‚¤ã‚¹ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã®å–å¾—
 	D3DMATERIAL9 matDef;
 	pDevice -> GetMaterial( &matDef );
 
@@ -290,20 +288,20 @@ void DrawPlayer( void )
 	if( g_Player.Use == true)
 	{
 
-		//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+		//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 		SetWorld( g_Player.World.Pos , g_Player.World.Rot , g_Player.World.Scl );
 
 
 		for( int i = 0 ; i < ( int )g_nNumMatPlayer ; i++ )
 		{
-			//	ƒfƒoƒCƒX‚Éƒ}ƒeƒŠƒAƒ‹‚ğİ’è
+			//	ãƒ‡ãƒã‚¤ã‚¹ã«ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¨­å®š
 			pDevice -> SetMaterial( &pMatPlayer[ i ].MatD3D );
 
-			//	ƒeƒNƒXƒ`ƒƒİ’è
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 			pDevice -> SetTexture( 0 , g_pTexturePlayer[ i ] );
 
 
-			//	•`‰æ
+			//	æç”»
 			g_pMeshPlayer -> DrawSubset( i );
 
 		}	//	end of for
@@ -319,8 +317,8 @@ void DrawPlayer( void )
 
 	char aStr[ 256 ] , aStr01[ 256 ];
 
-	sprintf( &aStr[ 0 ] , "ƒvƒŒƒCƒ„[À•W : %.3f , %.3f , %.3f" , g_Player.World.Pos.x , g_Player.World.Pos.y , g_Player.World.Pos.z );
-	sprintf( &aStr01[ 0 ] , "ƒvƒŒƒCƒ„[Šp“x : %.3f , %.3f , %.3f" , g_Player.World.Rot.x , g_Player.World.Rot.y , g_Player.World.Rot.z );
+	sprintf( &aStr[ 0 ] , "ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åº§æ¨™ : %.3f , %.3f , %.3f" , g_Player.World.Pos.x , g_Player.World.Pos.y , g_Player.World.Pos.z );
+	sprintf( &aStr01[ 0 ] , "ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è§’åº¦ : %.3f , %.3f , %.3f" , g_Player.World.Rot.x , g_Player.World.Rot.y , g_Player.World.Rot.z );
 
 	g_pFontModel -> DrawText( NULL ,
 						&aStr[ 0 ] ,
@@ -343,18 +341,18 @@ void DrawPlayer( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void KeyboardOperate( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		ƒL[ƒ{[ƒh‚Å‚Ì‘€ì
+ é–¢æ•°å:	void KeyboardOperate( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ã®æ“ä½œ
 -----------------------------------------------------------------------------*/
 void KeyboardOperate( void )
 {
 
-	//	‰e‚Ìî•ñæ“¾
+	//	å½±ã®æƒ…å ±å–å¾—
 	SHADOW *Shadow = GetShadow( 0 );
 
-	//	ƒƒbƒVƒ…ƒEƒH[ƒ‹î•ñæ“¾
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«æƒ…å ±å–å¾—
 	MESHWALL *MeshWall = GetMeshWall();
 
 
@@ -367,7 +365,7 @@ void KeyboardOperate( void )
 		Shadow -> World.Pos.z += g_Player.Move.z;		
 
 
-		//	–Ú“I’n‚É‚Ç‚¿‚ç‚ª‹ß‚¢‚©”»’è
+		//	ç›®çš„åœ°ã«ã©ã¡ã‚‰ãŒè¿‘ã„ã‹åˆ¤å®š
 		if( g_Player.World.Rot.y > 0 )
 		{
 
@@ -394,7 +392,7 @@ void KeyboardOperate( void )
 		Shadow -> World.Pos.z -= g_Player.Move.z;
 
 
-		//	–Ú“I’n‚É‚Ç‚¿‚ç‚ª‹ß‚¢‚©”»’è
+		//	ç›®çš„åœ°ã«ã©ã¡ã‚‰ãŒè¿‘ã„ã‹åˆ¤å®š
 		if( g_Player.World.Rot.y > 180 )
 		{
 
@@ -421,7 +419,7 @@ void KeyboardOperate( void )
 		Shadow -> World.Pos.x -= g_Player.Move.x;
 
 
-		//	–Ú“I’n‚É‚Ç‚¿‚ç‚ª‹ß‚¢‚©”»’è
+		//	ç›®çš„åœ°ã«ã©ã¡ã‚‰ãŒè¿‘ã„ã‹åˆ¤å®š
 		if( g_Player.World.Rot.y > -90 )
 		{
 
@@ -448,7 +446,7 @@ void KeyboardOperate( void )
 		Shadow -> World.Pos.x += g_Player.Move.x;
 
 
-		//	–Ú“I’n‚É‚Ç‚¿‚ç‚ª‹ß‚¢‚©”»’è
+		//	ç›®çš„åœ°ã«ã©ã¡ã‚‰ãŒè¿‘ã„ã‹åˆ¤å®š
 		if( g_Player.World.Rot.y > 90 )
 		{
 
@@ -468,20 +466,20 @@ void KeyboardOperate( void )
 	}	//	end of if
 
 
-	//	Šp“x‚ª‚P‚W‚O“x‚ğ’´‚¦‚½‚ç
+	//	è§’åº¦ãŒï¼‘ï¼˜ï¼åº¦ã‚’è¶…ãˆãŸã‚‰
 	if( g_Player.World.Rot.y > 180 )
 	{
 
-		//	-‚P‚V‚X“x‚É‚·‚é
+		//	-ï¼‘ï¼—ï¼™åº¦ã«ã™ã‚‹
 		g_Player.World.Rot.y -= 360;
 
 	}	//	end of if
 
-	//	Šp“x‚ª-‚P‚W‚O“x‚ğ’´‚¦‚½‚ç
+	//	è§’åº¦ãŒ-ï¼‘ï¼˜ï¼åº¦ã‚’è¶…ãˆãŸã‚‰
 	else if( g_Player.World.Rot.y < -180 )
 	{
 
-		//	‚P‚V‚X“x‚É‚·‚é
+		//	ï¼‘ï¼—ï¼™åº¦ã«ã™ã‚‹
 		g_Player.World.Rot.y += 360;
 
 	}	//	end of else if
@@ -516,14 +514,14 @@ void KeyboardOperate( void )
 	}	//	end of if
 
 /*
-	//	’e”­Ë
+	//	å¼¾ç™ºå°„
 	if( GetKeyboardTrigger( DIK_SPACE ) )
 	{
 
-		//	’e‚ÌƒZƒbƒg
+		//	å¼¾ã®ã‚»ãƒƒãƒˆ
 		SetBullet( D3DXVECTOR3( g_Player.World.Pos.x , g_Player.World.Pos.y + 15.0f , g_Player.World.Pos.z ) , g_Player.World.Rot , 10.0f );
 
-		//	‰¹ŠyÄ¶
+		//	éŸ³æ¥½å†ç”Ÿ
 		PlaySound( SOUND_LABEL_SE_SHOT );
 
 	}	//	end of if
@@ -532,22 +530,22 @@ void KeyboardOperate( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void CollisionObject( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•¨‘Ì‚Æ‚Ì“–‚½‚è”»’è
+ é–¢æ•°å:	void CollisionObject( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ç‰©ä½“ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 -----------------------------------------------------------------------------*/
 void CollisionObject( void )
 {
 
-	//	‰e‚Ìî•ñæ“¾
+	//	å½±ã®æƒ…å ±å–å¾—
 	SHADOW *Shadow = GetShadow( 0 );
 
-	//	ƒƒbƒVƒ…ƒEƒH[ƒ‹î•ñæ“¾
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«æƒ…å ±å–å¾—
 	MESHWALL *MeshWall = GetMeshWall();
 
 
-	//	•Ç‚Æ‚Ì”»’è
+	//	å£ã¨ã®åˆ¤å®š
 	if( g_Player.World.Pos.z + 10.0f > MeshWall[ 0 ].World.Pos.z )
 	{
 
@@ -586,12 +584,12 @@ void CollisionObject( void )
 
 
 
-	//	Œš•¨î•ñ‚Ìæ“¾
+	//	å»ºç‰©æƒ…å ±ã®å–å¾—
 	BUILDING *Building = GetBuilding();
 
 	for( int CntBuilding = 0 ; CntBuilding < MAX_BUILDING ; CntBuilding++ , Building++ )
 	{
-		//	‹…‚Æ‹…‚Ì“–‚½‚è”»’è
+		//	çƒã¨çƒã®å½“ãŸã‚Šåˆ¤å®š
 		if( SphereCollision( D3DXVECTOR3( g_Player.World.Pos.x , g_Player.World.Pos.y + 10.0f , g_Player.World.Pos.z ) , D3DXVECTOR3( Building -> World.Pos.x , Building -> World.Pos.y + 30.0f , Building -> World.Pos.z ) , g_Player.Radius , Building -> Radius ) )
 		{
 
@@ -608,10 +606,10 @@ void CollisionObject( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	PLAYER *GetPlayer( void )
- ˆø”:		
- –ß‚è’l:	return &g_Player;
- à–¾:		ƒvƒŒƒCƒ„[î•ñ‚Ìæ“¾
+ é–¢æ•°å:	PLAYER *GetPlayer( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	return &g_Player;
+ èª¬æ˜:		ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æƒ…å ±ã®å–å¾—
 -----------------------------------------------------------------------------*/
 PLAYER *GetPlayer( void )
 {
