@@ -1,140 +1,138 @@
 /*=============================================================================
 
-		ƒXƒJƒCƒh[ƒ€[ skydome.cpp ]
+		ã‚¹ã‚«ã‚¤ãƒ‰ãƒ¼ãƒ [ skydome.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìŽÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/11/14
 -------------------------------------------------------------------------------
-	¡@Update
+	â– ã€€Update
 		2016/11/14
 =============================================================================*/
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include "main.h"
 #include "skydome.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/Skydome.jpg"
 
-#define FIELD_WIDTH ( 20 )	//	‰¡‚Ì–‡”
-#define FIELD_HEIGHT ( 30 )	//	c‚Ì–‡”
+#define FIELD_WIDTH ( 20 )	//	æ¨ªã®æžšæ•°
+#define FIELD_HEIGHT ( 30 )	//	ç¸¦ã®æžšæ•°
 
-#define RADIUS ( 2600.0f )	//	”¼Œa
+#define RADIUS ( 2600.0f )	//	åŠå¾„
 
-#define VERTEX ( ( ( 2 + 2 * FIELD_WIDTH ) * FIELD_HEIGHT + ( FIELD_HEIGHT - 1 ) * 2 ) ) //	’¸“_”
+#define VERTEX ( ( ( 2 + 2 * FIELD_WIDTH ) * FIELD_HEIGHT + ( FIELD_HEIGHT - 1 ) * 2 ) ) //	é ‚ç‚¹æ•°
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 typedef struct
 {
-	WORLD World;	//	ƒ[ƒ‹ƒh•ÏŠ·—p•Ï”
-	bool Use;	//	Žg—pƒtƒ‰ƒO
+	WORLD World;	//	ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ç”¨å¤‰æ•°
+	bool Use;	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 
 }SKYDOME;
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexSkyDome( LPDIRECT3DDEVICE9 pDevice , int NumBlock_X , int NumBlock_Y , float Radius );
 
-//	ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh‚ÌƒZƒbƒg
+//	ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ã‚»ãƒƒãƒˆ
 void SetSkyDome( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferSkyDome = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DINDEXBUFFER9 g_pIdxBufferSkyDome = NULL;	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ÌƒAƒhƒŒƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferSkyDome = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DINDEXBUFFER9 g_pIdxBufferSkyDome = NULL;	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
 
-LPDIRECT3DTEXTURE9 g_pTextureSkyDome = NULL;	//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DTEXTURE9 g_pTextureSkyDome = NULL;	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-SKYDOME g_SkyDome;		//	ƒXƒJƒCƒh[ƒ€\‘¢‘Ì
+SKYDOME g_SkyDome;		//	ã‚¹ã‚«ã‚¤ãƒ‰ãƒ¼ãƒ æ§‹é€ ä½“
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT InitSkyDome( void )
- ˆø”:		‚È‚µ
- –ß‚è’l:	‚È‚µ
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	HRESULT InitSkyDome( void )
+ å¼•æ•°:		ãªã—
+ æˆ»ã‚Šå€¤:	ãªã—
+ èª¬æ˜Ž:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitSkydome( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureSkyDome  ) ) )
 	{
-		MessageBox( NULL , "[ skydome.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚Ýž‚Ý‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ skydome.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexSkyDome( pDevice , FIELD_WIDTH , FIELD_HEIGHT , RADIUS );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 
-	//	À•W
+	//	åº§æ¨™
 	g_SkyDome.World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-	//	‰ñ“]—Ê
+	//	å›žè»¢é‡
 	g_SkyDome.World.Rot =  D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-	//	Šg‘å—¦
+	//	æ‹¡å¤§çŽ‡
 	g_SkyDome.World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-	//	Žg—pƒtƒ‰ƒO
+	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 	g_SkyDome.Use = false;
 
 
 
-	//	ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh‚ÌƒZƒbƒg
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ã‚»ãƒƒãƒˆ
 	SetSkyDome( D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitSkyDome( void )
- ˆø”:		‚È‚µ
- –ß‚è’l:	‚È‚µ
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitSkyDome( void )
+ å¼•æ•°:		ãªã—
+ æˆ»ã‚Šå€¤:	ãªã—
+ èª¬æ˜Ž:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitSkydome( void )
 {
 
-	if( g_pVtxBufferSkyDome != NULL )	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pVtxBufferSkyDome != NULL )	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 		g_pVtxBufferSkyDome -> Release();
 		g_pVtxBufferSkyDome = NULL;
 
 	}	//	end of if
 
-	if( g_pIdxBufferSkyDome != NULL )	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pIdxBufferSkyDome != NULL )	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 		g_pIdxBufferSkyDome -> Release();
 		g_pIdxBufferSkyDome = NULL;
 
 	}	//	end of if
 
-	if( g_pTextureSkyDome != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureSkyDome != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 		g_pTextureSkyDome -> Release();
 		g_pTextureSkyDome = NULL;
@@ -144,10 +142,10 @@ void UninitSkydome( void )
 }	//	end of func
  
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateSkyDome( void )
- ˆø”:		‚È‚µ
- –ß‚è’l:	‚È‚µ
- à–¾:		XV
+ é–¢æ•°å:	void UpdateSkyDome( void )
+ å¼•æ•°:		ãªã—
+ æˆ»ã‚Šå€¤:	ãªã—
+ èª¬æ˜Ž:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateSkydome( void )
 {
@@ -163,36 +161,36 @@ void UpdateSkydome( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawSkyDome( void )
- ˆø”:		‚È‚µ
- –ß‚è’l:	‚È‚µ
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawSkyDome( void )
+ å¼•æ•°:		ãªã—
+ æˆ»ã‚Šå€¤:	ãªã—
+ èª¬æ˜Ž:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawSkydome( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒpƒCƒvƒ‰ƒCƒ“‚ÌƒXƒgƒŠ[ƒ€
+	//	ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferSkyDome , 0 , sizeof( VERTEX_3D ));
 
 	pDevice -> SetIndices( g_pIdxBufferSkyDome );
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌÝ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureSkyDome );
 
 	if( g_SkyDome.Use == true )
 	{
 
-		//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+		//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 		SetWorld( g_SkyDome.World.Pos , g_SkyDome.World.Rot , g_SkyDome.World.Scl );
 
-		//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+		//	ãƒãƒªã‚´ãƒ³ã®æç”»
 		pDevice -> DrawIndexedPrimitive( D3DPT_TRIANGLESTRIP , 0 , 0 , VERTEX , 0 , VERTEX - 2 );
 
 	}	//	end of if
@@ -201,48 +199,48 @@ void DrawSkydome( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertex( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float Radius )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice	ƒfƒoƒCƒX
-			UINT NumBlock_X				‰¡‚Ì–‡”
-			UINT NumBlock_Y				c‚Ì–‡”
-			float Radius				”¼Œa
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertex( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float Radius )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice	ãƒ‡ãƒã‚¤ã‚¹
+			UINT NumBlock_X				æ¨ªã®æžšæ•°
+			UINT NumBlock_Y				ç¸¦ã®æžšæ•°
+			float Radius				åŠå¾„
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜Ž:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexSkyDome( LPDIRECT3DDEVICE9 pDevice , int NumBlock_X , int NumBlock_Y , float Radius )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
-	//	ƒ|ƒCƒ“ƒ^•Ï”
+	//	ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	WORD* pIdx;
 
 	HRESULT hr;
 
-	//	À•W‚ÌŠi”[•Ï”
+	//	åº§æ¨™ã®æ ¼ç´å¤‰æ•°
 	D3DXVECTOR3 Pos;
 
-	//	’¸“_”‚ÌŒvŽZ
+	//	é ‚ç‚¹æ•°ã®è¨ˆç®—
 	int VerTex = ( NumBlock_X + 1 ) * ( NumBlock_Y + 1 );
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌŒvŽZ
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨ˆç®—
 	int IdxVerTex = ((2 + 2 * NumBlock_X) * NumBlock_Y+ ( NumBlock_Y - 1 ) * 2);
 
-	//	360“x‚Ìˆê‚Â•ª‚ÌŠp“x‹‚ß‚é
+	//	360åº¦ã®ä¸€ã¤åˆ†ã®è§’åº¦æ±‚ã‚ã‚‹
 	float Rot_XZ = ( float )360 / NumBlock_X;
 
-	//	180“x‚Ìˆê‚Â•ª‚ÌŠp“x‹‚ß‚é( ”¼‰~‚Ìê‡‚Í90‚É‚·‚é , ‰~‚Ìê‡‚Í180‚É‚·‚é )
+	//	180åº¦ã®ä¸€ã¤åˆ†ã®è§’åº¦æ±‚ã‚ã‚‹( åŠå††ã®å ´åˆã¯90ã«ã™ã‚‹ , å††ã®å ´åˆã¯180ã«ã™ã‚‹ )
 	float Rot_Y = ( float )90 / NumBlock_Y;
 
-	//	ˆê‚Â‚ÌUVÀ•W‚ð‹‚ß‚é
+	//	ä¸€ã¤ã®UVåº§æ¨™ã‚’æ±‚ã‚ã‚‹
 	float Uset = 1.0f / NumBlock_X;
 	float Vset = 1.0f / NumBlock_Y;
 
 
 
-	//	’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	if( FAILED( pDevice -> CreateVertexBuffer( sizeof( VERTEX_3D ) * NUM_VERTEX * VerTex , D3DUSAGE_WRITEONLY , FVF_VERTEX_3D , D3DPOOL_MANAGED , &g_pVtxBufferSkyDome , NULL ) ) )
 	{
 		return E_FAIL;
@@ -250,13 +248,13 @@ HRESULT MakeVertexSkyDome( LPDIRECT3DDEVICE9 pDevice , int NumBlock_X , int NumB
 	}	//	end of if
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ì¶¬
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	hr = pDevice -> CreateIndexBuffer(
-		sizeof( WORD ) * IdxVerTex ,	//	ƒoƒbƒtƒ@—Ê
-		D3DUSAGE_WRITEONLY ,	//	Žg—p•û–@ƒtƒ‰ƒO
-		D3DFMT_INDEX16 , //	ƒCƒ“ƒfƒbƒNƒXƒtƒH[ƒ}ƒbƒg
-		D3DPOOL_MANAGED , //	ƒƒ‚ƒŠ‚ÌŠÇ—•û–@
-		&g_pIdxBufferSkyDome ,	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^[ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ÌƒAƒhƒŒƒX
+		sizeof( WORD ) * IdxVerTex ,	//	ãƒãƒƒãƒ•ã‚¡é‡
+		D3DUSAGE_WRITEONLY ,	//	ä½¿ç”¨æ–¹æ³•ãƒ•ãƒ©ã‚°
+		D3DFMT_INDEX16 , //	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
+		D3DPOOL_MANAGED , //	ãƒ¡ãƒ¢ãƒªã®ç®¡ç†æ–¹æ³•
+		&g_pIdxBufferSkyDome ,	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
 		NULL);
 
 	if( FAILED( hr ) )
@@ -266,103 +264,103 @@ HRESULT MakeVertexSkyDome( LPDIRECT3DDEVICE9 pDevice , int NumBlock_X , int NumB
 
 	}	//	end of if
 
-	//	ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferSkyDome -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
-	//	c
+	//	ç¸¦
 	for( int Cnt1 = 0 ; Cnt1 < NumBlock_Y + 1 ; Cnt1++ )
 	{
-		//	Šp“x‚ÌÝ’è
-		float ƒÆy = 90 - ( Cnt1 * Rot_Y );
+		//	è§’åº¦ã®è¨­å®š
+		float Î¸y = 90 - ( Cnt1 * Rot_Y );
 
-		//	Å‰‚É90“x‚©‚ç‹‚ß‚é
-		//	90“x‚©‚çˆø‚¢‚Ä‚¢‚­
-		Pos.y = Radius * sinf( D3DXToRadian( ƒÆy ) );
+		//	æœ€åˆã«90åº¦ã‹ã‚‰æ±‚ã‚ã‚‹
+		//	90åº¦ã‹ã‚‰å¼•ã„ã¦ã„ã
+		Pos.y = Radius * sinf( D3DXToRadian( Î¸y ) );
 
-		//	‰¡
+		//	æ¨ª
 		for( int Cnt2 = 0 ; Cnt2 < NumBlock_X + 1 ; Cnt2++ )
 		{
-			//	Šp“x‚ÌÝ’è
-			float ƒÆxz = ( -1 * Cnt2 ) * Rot_XZ;
+			//	è§’åº¦ã®è¨­å®š
+			float Î¸xz = ( -1 * Cnt2 ) * Rot_XZ;
 
-			//	XZŽ²‚Å360“x‹‚ß‚é
-			Pos.x = Radius * cosf( D3DXToRadian( ƒÆy ) ) * cosf( D3DXToRadian( ƒÆxz ) );
-			Pos.z = Radius * cosf( D3DXToRadian( ƒÆy ) ) * sinf( D3DXToRadian( ƒÆxz ) );
+			//	XZè»¸ã§360åº¦æ±‚ã‚ã‚‹
+			Pos.x = Radius * cosf( D3DXToRadian( Î¸y ) ) * cosf( D3DXToRadian( Î¸xz ) );
+			Pos.z = Radius * cosf( D3DXToRadian( Î¸y ) ) * sinf( D3DXToRadian( Î¸xz ) );
 
 
-			//	’¸“_À•W‚ÌÝ’è
+			//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 			pVtx[ 0 ].pos = D3DXVECTOR3( Pos.x , Pos.y , Pos.z );
 
 
-			//	–@ü‚ÌÝ’è
+			//	æ³•ç·šã®è¨­å®š
 			pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 1.0f , 0.0f );
 
 
-			//	’¸“_F‚ÌÝ’è
+			//	é ‚ç‚¹è‰²ã®è¨­å®š
 			pVtx[ 0 ].color = D3DCOLOR_RGBA( 255 , 255 , 255 , 255 );
 
 
-			//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 			pVtx[ 0 ].tex = D3DXVECTOR2( Cnt2 * Uset , Cnt1 * Vset );
 
-			pVtx ++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pVtx ++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of for
 
 	}	//	end of for
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferSkyDome -> Unlock();
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ðƒƒbƒN
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯
 	g_pIdxBufferSkyDome -> Lock( 0 , 0 , (void**)&pIdx , 0 );
 
 #if 1
-	//	ŽžŒv‰ñ‚è‚ð— –Ê
-	//	c
+	//	æ™‚è¨ˆå›žã‚Šã‚’è£é¢
+	//	ç¸¦
 	for( int Cnt1 = 0 ; Cnt1 < NumBlock_Y ; Cnt1++ )
 	{
 
-		//	‚Í‚¶‚ß‚¶‚á‚È‚©‚Á‚½‚ç
-		//	k‘Þƒ|ƒŠƒSƒ“
+		//	ã¯ã˜ã‚ã˜ã‚ƒãªã‹ã£ãŸã‚‰
+		//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 		if( Cnt1 != 0 )
 		{
 
-			//	1“_‘Å‚Â
+			//	1ç‚¹æ‰“ã¤
 			pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 
-			pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of if
 
-		//	2“_‘Å‚Â
+		//	2ç‚¹æ‰“ã¤
 		pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 		pIdx[ 1 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - ( NumBlock_X + 1 );
 
-		pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+		pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
-		//	‰¡
+		//	æ¨ª
 		for( int Cnt2 = 0 ; Cnt2 < NumBlock_X ; Cnt2++ )
 		{
 
-			//	2“_‘Å‚Â
+			//	2ç‚¹æ‰“ã¤
 			pIdx[ 0 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) + Cnt2;
 			pIdx[ 1 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) - ( NumBlock_X + 1 ) + Cnt2;
 
-			pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of for
 
-		//	ÅŒã‚¶‚á‚È‚©‚Á‚½‚ç
-		//	k‘Þƒ|ƒŠƒSƒ“
+		//	æœ€å¾Œã˜ã‚ƒãªã‹ã£ãŸã‚‰
+		//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 		if( Cnt1 != NumBlock_Y - 1 )
 		{
 
-			//	1“_‘Å‚Â
+			//	1ç‚¹æ‰“ã¤
 			pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - 1;
 
-			pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of if
 
@@ -407,47 +405,47 @@ HRESULT MakeVertexSkyDome( LPDIRECT3DDEVICE9 pDevice , int NumBlock_X , int NumB
 	//
 	//}
 
-	//	‹tŽžŒv‰ñ‚è‚ð— –Ê‚Æ‚·‚é
-	//	c
+	//	é€†æ™‚è¨ˆå›žã‚Šã‚’è£é¢ã¨ã™ã‚‹
+	//	ç¸¦
 	//for( int Cnt1 = 0 ; Cnt1 < NumBlock_Y ; Cnt1++ )
 	//{
-	//	//	‚Í‚¶‚ß‚¶‚á‚È‚©‚Á‚½‚ç
-	//	//	k‘Þƒ|ƒŠƒSƒ“
+	//	//	ã¯ã˜ã‚ã˜ã‚ƒãªã‹ã£ãŸã‚‰
+	//	//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 	//	if( Cnt1 != 0 )
 	//	{
-	//		//	1“_‘Å‚Â
+	//		//	1ç‚¹æ‰“ã¤
 
 	//		pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - 1;
 
-	//		pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+	//		pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 	//	}	//	end of if
 
-	//	//	2“_‘Å‚Â
+	//	//	2ç‚¹æ‰“ã¤
 	//	pIdx[ 1 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 	//	pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - ( NumBlock_X + 1 );
 
-	//	pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+	//	pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
-	//	//	‰¡
+	//	//	æ¨ª
 	//	for( int Cnt2 = 0 ; Cnt2 < NumBlock_X ; Cnt2++ )
 	//	{
-	//		//	2“_‘Å‚Â
+	//		//	2ç‚¹æ‰“ã¤
 	//		pIdx[ 1 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) + Cnt2;
 	//		pIdx[ 0 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) - ( NumBlock_X + 1 ) + Cnt2;
 
-	//		pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+	//		pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 	//	}	//	end of for
 
-	//	//	ÅŒã‚¶‚á‚È‚©‚Á‚½‚ç
-	//	//	k‘Þƒ|ƒŠƒSƒ“
+	//	//	æœ€å¾Œã˜ã‚ƒãªã‹ã£ãŸã‚‰
+	//	//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 	//	if( Cnt1 != NumBlock_Y - 1 )
 	//	{
-	//		//	1“_‘Å‚Â
+	//		//	1ç‚¹æ‰“ã¤
 	//		pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 
-	//		pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+	//		pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 	//	}	//	end of if
 
@@ -455,7 +453,7 @@ HRESULT MakeVertexSkyDome( LPDIRECT3DDEVICE9 pDevice , int NumBlock_X , int NumB
 
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pIdxBufferSkyDome -> Unlock();
 
 	return S_OK;
@@ -463,24 +461,24 @@ HRESULT MakeVertexSkyDome( LPDIRECT3DDEVICE9 pDevice , int NumBlock_X , int NumB
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetField( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Rot		‰ñ“]—Ê
- –ß‚è’l:	‚È‚µ
- à–¾:		ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetField( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Rot		å›žè»¢é‡
+ æˆ»ã‚Šå€¤:	ãªã—
+ èª¬æ˜Ž:		ãƒ¡ãƒƒã‚·ãƒ¥ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetSkyDome( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 {
 
 	if( g_SkyDome.Use == false )
 	{
-		//	À•W
+		//	åº§æ¨™
 		g_SkyDome.World.Pos = Pos;
 
-		//	‰ñ“]—Ê
+		//	å›žè»¢é‡
 		g_SkyDome.World.Rot = Rot;
 
-		//	Žg—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_SkyDome.Use = true;
 
 
