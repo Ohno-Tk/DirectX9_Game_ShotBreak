@@ -1,95 +1,93 @@
 /*=============================================================================
 
-		ƒtƒF[ƒhˆ—[ fade.cpp ]
+		ãƒ•ã‚§ãƒ¼ãƒ‰å‡¦ç†[ fade.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/12/16
 -------------------------------------------------------------------------------
-	¡@Update
+	â– ã€€Update
 =============================================================================*/
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include "main.h"
 #include "fade.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define FADE_TEXTURENAME "data/TEXTURE/GAME/fade.png"
 
-#define FADE_RATE ( 1.0f / 80 )	//	‚Ç‚Ì‚­‚ç‚¢‚ÅƒtƒF[ƒh‚³‚¹‚é‚Ì‚©
+#define FADE_RATE ( 1.0f / 80 )	//	ã©ã®ãã‚‰ã„ã§ãƒ•ã‚§ãƒ¼ãƒ‰ã•ã›ã‚‹ã®ã‹
 
-#define FADE_POS_X ( 0.0f )	//	ƒtƒF[ƒh‚Ì•\¦ˆÊ’u‚w
-#define FADE_POS_Y ( 0.0f )	//	ƒtƒF[ƒh‚Ì•\¦ˆÊ’u‚x
+#define FADE_POS_X ( 0.0f )	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã®è¡¨ç¤ºä½ç½®ï¼¸
+#define FADE_POS_Y ( 0.0f )	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã®è¡¨ç¤ºä½ç½®ï¼¹
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
-HRESULT MakeVertexFade( LPDIRECT3DDEVICE9 pDevice );	//	’¸“_‚Ìì¬
-void SetColorFade( D3DXCOLOR colorFade , VERTEX_2D* pVtx );	//	’¸“_ƒJƒ‰[‚Ìİ’è
+HRESULT MakeVertexFade( LPDIRECT3DDEVICE9 pDevice );	//	é ‚ç‚¹ã®ä½œæˆ
+void SetColorFade( D3DXCOLOR colorFade , VERTEX_2D* pVtx );	//	é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã®è¨­å®š
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferFade = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DTEXTURE9 g_pTextureFade = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferFade = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DTEXTURE9 g_pTextureFade = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-D3DXCOLOR g_colorFade;	//	ƒtƒF[ƒhF
-FADE g_fade;	//	ƒtƒF[ƒhó‘Ô
+D3DXCOLOR g_colorFade;	//	ãƒ•ã‚§ãƒ¼ãƒ‰è‰²
+FADE g_fade;	//	ãƒ•ã‚§ãƒ¼ãƒ‰çŠ¶æ…‹
 
-MODE g_modenext = MODE_TITLE;	//	Ÿ‚Ìƒ‚[ƒh
+MODE g_modenext = MODE_TITLE;	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰
 
-bool g_FadeFlag = false;	//	ƒtƒF[ƒhƒtƒ‰ƒO
+bool g_FadeFlag = false;	//	ãƒ•ã‚§ãƒ¼ãƒ‰ãƒ•ãƒ©ã‚°
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT InitFade( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	HRESULT InitFade( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitFade( void )
 {
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//	ƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , FADE_TEXTURENAME , &g_pTextureFade  ) ) )
 	{
-		MessageBox( NULL , "ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexFade( pDevice );
 
 
-	//‰Šú‰»
+	//åˆæœŸåŒ–
 
-	//	ƒtƒF[ƒhF
+	//	ãƒ•ã‚§ãƒ¼ãƒ‰è‰²
 	g_colorFade = D3DXCOLOR( 0.0f , 0.0f , 0.0f , 1.0f );
 
 
-	//	ƒtƒF[ƒhó‘Ô
+	//	ãƒ•ã‚§ãƒ¼ãƒ‰çŠ¶æ…‹
 	g_fade = FADE_IN;
 
 
-	//	ƒtƒF[ƒhƒtƒ‰ƒO
+	//	ãƒ•ã‚§ãƒ¼ãƒ‰ãƒ•ãƒ©ã‚°
 	g_FadeFlag = false;
 
-	//	ƒ‚[ƒh‚Ìæ“¾
+	//	ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 	MODE *ModeNext = GetMode();
 
 	g_modenext = *ModeNext;
@@ -97,15 +95,15 @@ void InitFade( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitFade( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitFade( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitFade( void )
 {
 
-	if( g_pTextureFade != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureFade != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 
 		g_pTextureFade -> Release();
@@ -113,7 +111,7 @@ void UninitFade( void )
 
 	}	//	end of if
 
-	if(g_pVtxBufferFade != NULL)	//	’¸“_ƒoƒbƒtƒ@‚ÌŠJ•ú
+	if(g_pVtxBufferFade != NULL)	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®é–‹æ”¾
 	{
 
 		g_pVtxBufferFade -> Release();
@@ -124,38 +122,38 @@ void UninitFade( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdataFade( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdataFade( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateFade( void )
 {
 
-	// ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	// ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_2D* pVtx;
 
 
 
-	if( g_fade == FADE_NONE )	//	ƒtƒF[ƒh‚ª‚È‚¢‚Ìˆ—
+	if( g_fade == FADE_NONE )	//	ãƒ•ã‚§ãƒ¼ãƒ‰ãŒãªã„æ™‚ã®å‡¦ç†
 	{
 
 		return;
 
 	}	//	end of if
 
-	if( g_fade == FADE_IN )	//	ƒtƒF[ƒhƒCƒ“‚Ìˆ—
+	if( g_fade == FADE_IN )	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³æ™‚ã®å‡¦ç†
 	{
 
-		g_colorFade.a -= FADE_RATE;	//	a’l‚ğŒ¸Z‚µ‚ÄŒã‚ë‚Ì‰æ–Ê‚ğ•‚‚©‚Ñã‚ª‚ç‚¹‚é
+		g_colorFade.a -= FADE_RATE;	//	aå€¤ã‚’æ¸›ç®—ã—ã¦å¾Œã‚ã®ç”»é¢ã‚’æµ®ã‹ã³ä¸ŠãŒã‚‰ã›ã‚‹
 
-		//	ƒtƒF[ƒhƒCƒ“‚ÌI—¹
+		//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³ã®çµ‚äº†
 		if( g_colorFade.a < 0.0f )
 		{
 			g_colorFade.a = 0.0f;
 			g_fade = FADE_NONE;
 
-			//	ƒtƒF[ƒh’†‚Ìƒtƒ‰ƒO‚ğOFF
+			//	ãƒ•ã‚§ãƒ¼ãƒ‰ä¸­ã®ãƒ•ãƒ©ã‚°ã‚’OFF
 			g_FadeFlag = false;
 
 		}	//	end of if
@@ -163,19 +161,19 @@ void UpdateFade( void )
 	}	//	end of if
 
 
-	else if( g_fade == FADE_OUT )	//	ƒtƒF[ƒhƒAƒEƒg‚Ìˆ—
+	else if( g_fade == FADE_OUT )	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆæ™‚ã®å‡¦ç†
 	{
 
-		g_colorFade.a += FADE_RATE;	//	a’l‚ğ‰ÁZ‚µ‚ÄŒã‚ë‚Ì‰æ–Ê‚ğÁ‚µ‚Ä‚¢‚­
+		g_colorFade.a += FADE_RATE;	//	aå€¤ã‚’åŠ ç®—ã—ã¦å¾Œã‚ã®ç”»é¢ã‚’æ¶ˆã—ã¦ã„ã
 
-		//	ƒtƒF[ƒhƒAƒEƒg‚ÌI—¹
+		//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã®çµ‚äº†
 		if( g_colorFade.a > 1.0f )
 		{
 
 			g_colorFade.a = 1.0f;
-			g_fade = FADE_IN;	//	ƒtƒF[ƒhƒCƒ“‚Éˆ—‚ÌØ‚è‘Ö‚¦
+			g_fade = FADE_IN;	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³ã«å‡¦ç†ã®åˆ‡ã‚Šæ›¿ãˆ
 
-			//	ƒtƒF[ƒh‚Ìİ’è
+			//	ãƒ•ã‚§ãƒ¼ãƒ‰ã®è¨­å®š
 			SetMode( g_modenext );
 
 		}	//	end of if
@@ -184,60 +182,60 @@ void UpdateFade( void )
 
 
 
-	// ƒoƒbƒtƒ@‚ğƒƒbƒN‚µA‰¼‘zƒAƒhƒŒƒX‚ğæ“¾
+	// ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	g_pVtxBufferFade -> Lock ( 0 , 0 , ( void** )&pVtx , 0 );
 
 
-	//	’¸“_ƒJƒ‰[‚Ìİ’è
+	//	é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã®è¨­å®š
 	SetColorFade( g_colorFade , pVtx );
 
 
-	//	ƒoƒbƒtƒ@‚ğƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferFade -> Unlock();
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawFade( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawFade( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawFade( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚Ìİ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_2D );
 
 
-	//	ƒXƒgƒŠ[ƒ€‚ğİ’è‚·‚é
+	//	ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’è¨­å®šã™ã‚‹
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferFade , 0 , sizeof( VERTEX_2D ) );
 
 
-	//	ƒeƒNƒXƒ`ƒƒİ’è
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 	pDevice -> SetTexture( 0 , g_pTextureFade );
 
 
-	//	ƒtƒF[ƒh‚Ì•`‰æ
+	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã®æç”»
 	pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , 0, NUM_POLYGON);
 
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void MakeVertexFade( LPDIRECT3DDEVICE9 pDevice )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice
- –ß‚è’l:	
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	void MakeVertexFade( LPDIRECT3DDEVICE9 pDevice )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexFade( LPDIRECT3DDEVICE9 pDevice )
 {
 	
-	// FAILEDƒ}ƒNƒ‚ÅƒGƒ‰[ƒ`ƒFƒbƒN
+	// FAILEDãƒã‚¯ãƒ­ã§ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if ( FAILED ( pDevice -> CreateVertexBuffer ( sizeof ( VERTEX_2D ) * NUM_VERTEX , D3DUSAGE_WRITEONLY , FVF_VERTEX_2D , D3DPOOL_MANAGED , &g_pVtxBufferFade , NULL ) ) )
 	{
 		return E_FAIL;
@@ -245,43 +243,43 @@ HRESULT MakeVertexFade( LPDIRECT3DDEVICE9 pDevice )
 	}	//	end of if
 
 
-	// ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	// ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_2D* pVtx;
 
 
-	// ƒoƒbƒtƒ@‚ğƒƒbƒN‚µA‰¼‘zƒAƒhƒŒƒX‚ğæ“¾
+	// ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã€ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	g_pVtxBufferFade -> Lock ( 0 , 0 , ( void** )&pVtx , 0 );
 
 
-	//	’¸“_À•W‚Ìİ’è
+	//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].pos = D3DXVECTOR3( FADE_POS_X                , FADE_POS_Y                 , 0.0f );
 	pVtx[ 1 ].pos = D3DXVECTOR3( FADE_POS_X + SCREEN_WIDTH , FADE_POS_Y                 , 0.0f );
 	pVtx[ 2 ].pos = D3DXVECTOR3( FADE_POS_X                , FADE_POS_Y + SCREEN_HEIGHT , 0.0f );
 	pVtx[ 3 ].pos = D3DXVECTOR3( FADE_POS_X + SCREEN_WIDTH , FADE_POS_Y + SCREEN_HEIGHT , 0.0f );
 
 
-	//	À•W•ÏŠ·Ï‚İ’¸“_ƒtƒ‰ƒO‚Ìİ’è
+	//	åº§æ¨™å¤‰æ›æ¸ˆã¿é ‚ç‚¹ãƒ•ãƒ©ã‚°ã®è¨­å®š
 	pVtx[ 0 ].rhw = 1.0f;
 	pVtx[ 1 ].rhw = 1.0f;
 	pVtx[ 2 ].rhw = 1.0f;
 	pVtx[ 3 ].rhw = 1.0f;
 
 
-	//	’¸“_F‚Ìİ’è
+	//	é ‚ç‚¹è‰²ã®è¨­å®š
 	pVtx[ 0 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 	pVtx[ 1 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 	pVtx[ 2 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 	pVtx[ 3 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 
 
-	//	ƒeƒNƒXƒ`ƒƒÀ•W‚Ìİ’è
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].tex = D3DXVECTOR2( 0 , 0 );
 	pVtx[ 1 ].tex = D3DXVECTOR2( 1 , 0 );
 	pVtx[ 2 ].tex = D3DXVECTOR2( 0 , 1 );
 	pVtx[ 3 ].tex = D3DXVECTOR2( 1 , 1 );
 
 
-	//	ƒoƒbƒtƒ@‚ğƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferFade -> Unlock();
 
 
@@ -290,16 +288,16 @@ HRESULT MakeVertexFade( LPDIRECT3DDEVICE9 pDevice )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetColorFade( D3DXCOLOR colorFade , VERTEX_2D* pVtx )
- ˆø”:		D3DXCOLOR g_colorFade	F
-			VERTEX_2D* pVtx			‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
- –ß‚è’l:	
- à–¾:		’¸“_ƒJƒ‰[‚Ìİ’è
+ é–¢æ•°å:	void SetColorFade( D3DXCOLOR colorFade , VERTEX_2D* pVtx )
+ å¼•æ•°:		D3DXCOLOR g_colorFade	è‰²
+			VERTEX_2D* pVtx			ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã®è¨­å®š
 -----------------------------------------------------------------------------*/
 void SetColorFade( D3DXCOLOR colorFade , VERTEX_2D* pVtx )
 {
 
-	//	’¸“_F‚Ìİ’è
+	//	é ‚ç‚¹è‰²ã®è¨­å®š
 	pVtx[ 0 ].color = D3DXCOLOR( colorFade.r , colorFade.g , colorFade.b , colorFade.a );
 	pVtx[ 1 ].color = D3DXCOLOR( colorFade.r , colorFade.g , colorFade.b , colorFade.a );
 	pVtx[ 2 ].color = D3DXCOLOR( colorFade.r , colorFade.g , colorFade.b , colorFade.a );
@@ -309,30 +307,30 @@ void SetColorFade( D3DXCOLOR colorFade , VERTEX_2D* pVtx )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetFade( FADE fade , MODE modenext )
- ˆø”:		FADE fade		ƒtƒF[ƒh‚Ìó‘Ô
-			MODE modenext	Ÿ‚Ìƒ‚[ƒh
- –ß‚è’l:	
- à–¾:		ƒtƒF[ƒh‚Ìİ’è
+ é–¢æ•°å:	void SetFade( FADE fade , MODE modenext )
+ å¼•æ•°:		FADE fade		ãƒ•ã‚§ãƒ¼ãƒ‰ã®çŠ¶æ…‹
+			MODE modenext	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ãƒ•ã‚§ãƒ¼ãƒ‰ã®è¨­å®š
 -----------------------------------------------------------------------------*/
 void SetFade( FADE fade , MODE modenext )
 {
-	//	ƒtƒF[ƒh‚Ìó‘Ô
+	//	ãƒ•ã‚§ãƒ¼ãƒ‰ã®çŠ¶æ…‹
 	g_fade = fade;
 
-	//	Ÿ‚Ìƒ‚[ƒh‚Ìİ’è
+	//	æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®è¨­å®š
 	g_modenext = modenext;
 
-	//	ƒtƒF[ƒh’†‚Ìƒtƒ‰ƒO‚ğON
+	//	ãƒ•ã‚§ãƒ¼ãƒ‰ä¸­ã®ãƒ•ãƒ©ã‚°ã‚’ON
 	g_FadeFlag = true;
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	MODE *GetNextMode( void )
- ˆø”:		
- –ß‚è’l:	return &g_modenext;
- à–¾:		Ÿ‚Ìƒ‚[ƒh‚Ìæ“¾
+ é–¢æ•°å:	MODE *GetNextMode( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	return &g_modenext;
+ èª¬æ˜:		æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 -----------------------------------------------------------------------------*/
 MODE *GetNextMode( void )
 {
@@ -342,12 +340,12 @@ MODE *GetNextMode( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	bool *GetFadeFlag( void )
- ˆø”:		
- –ß‚è’l:	return &g_FadeFlag;
-			ƒtƒF[ƒh’†		true
-			ƒtƒF[ƒhI—¹	false
- à–¾:		ƒtƒF[ƒh’†‚©‚Ç‚¤‚©
+ é–¢æ•°å:	bool *GetFadeFlag( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	return &g_FadeFlag;
+			ãƒ•ã‚§ãƒ¼ãƒ‰ä¸­		true
+			ãƒ•ã‚§ãƒ¼ãƒ‰çµ‚äº†	false
+ èª¬æ˜:		ãƒ•ã‚§ãƒ¼ãƒ‰ä¸­ã‹ã©ã†ã‹
 -----------------------------------------------------------------------------*/
 bool *GetFadeFlag( void )
 {
