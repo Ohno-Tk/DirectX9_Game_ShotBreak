@@ -1,155 +1,153 @@
 /*=============================================================================
 
-		ƒƒbƒVƒ…ƒEƒH[ƒ‹[ MeshWall.cpp ]
+		ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«[ MeshWall.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìŽÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/11/09
 -------------------------------------------------------------------------------
-	¡@Update
+	â– ã€€Update
 		2016/11/09
 =============================================================================*/
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include "main.h"
 #include "MeshWall.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/MeshWall.png"
 
-#define MAX_WALL ( 4 )	//	•Ç‚ÌÅ‘å”
+#define MAX_WALL ( 4 )	//	å£ã®æœ€å¤§æ•°
 
-#define WALL_WIDTH ( 10 )	//	‰¡‚Ì–‡”
-#define WALL_HEIGHT ( 1 )	//	c‚Ì–‡”
+#define WALL_WIDTH ( 10 )	//	æ¨ªã®æžšæ•°
+#define WALL_HEIGHT ( 1 )	//	ç¸¦ã®æžšæ•°
 
-#define WIDTH_ONE_SIZE ( 220 )	//	‰¡‚Ì1•Ó‚Ì‘å‚«‚³
-#define HEIGHT_ONE_SIZE ( 50 )	//	c‚Ì1•Ó‚Ì‘å‚«‚³
+#define WIDTH_ONE_SIZE ( 220 )	//	æ¨ªã®1è¾ºã®å¤§ãã•
+#define HEIGHT_ONE_SIZE ( 50 )	//	ç¸¦ã®1è¾ºã®å¤§ãã•
 
-#define WALL_POSITON ( WALL_WIDTH * WIDTH_ONE_SIZE / 2 )	//	•Ç‚ÌˆÊ’u
+#define WALL_POSITON ( WALL_WIDTH * WIDTH_ONE_SIZE / 2 )	//	å£ã®ä½ç½®
 
-#define VERTEX ( ( ( 2 + 2 * WALL_WIDTH ) * WALL_HEIGHT + ( WALL_HEIGHT - 1 ) * 2 ) )	//	’¸“_”
+#define VERTEX ( ( ( 2 + 2 * WALL_WIDTH ) * WALL_HEIGHT + ( WALL_HEIGHT - 1 ) * 2 ) )	//	é ‚ç‚¹æ•°
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexMeshWall( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Y );
 
-//	•Ç‚ÌƒZƒbƒg
+//	å£ã®ã‚»ãƒƒãƒˆ
 void SetWall( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferMeshWall = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DINDEXBUFFER9 g_pIdxBufferMeshWall = NULL;	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ÌƒAƒhƒŒƒX
-LPDIRECT3DTEXTURE9 g_pTextureMeshWall = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferMeshWall = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DINDEXBUFFER9 g_pIdxBufferMeshWall = NULL;	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
+LPDIRECT3DTEXTURE9 g_pTextureMeshWall = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-MESHWALL g_MeshWall[ MAX_WALL ];	//	ƒƒbƒVƒ…ƒEƒH[ƒ‹\‘¢‘Ì
+MESHWALL g_MeshWall[ MAX_WALL ];	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«æ§‹é€ ä½“
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT InitMeshWall( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	HRESULT InitMeshWall( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitMeshWall( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureMeshWall  ) ) )
 	{
-		MessageBox( NULL , "[ MeshWall.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚Ýž‚Ý‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ MeshWall.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexMeshWall( pDevice , WALL_WIDTH , WALL_HEIGHT , WIDTH_ONE_SIZE , HEIGHT_ONE_SIZE );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_WALL ; Cnt++ )
 	{
-		//	À•W
+		//	åº§æ¨™
 		g_MeshWall[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§çŽ‡
 		g_MeshWall[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›žè»¢é‡
 		g_MeshWall[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Žg—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_MeshWall[ Cnt ].Use = false;
 
 	}	//	end of for
 
 
-	//	•Ç‚ÌƒZƒbƒg
+	//	å£ã®ã‚»ãƒƒãƒˆ
 
-	//	‰œ‚Ì•Ç
+	//	å¥¥ã®å£
 	SetWall( D3DXVECTOR3( 0.0f , 0.0f , WALL_POSITON ) , D3DXVECTOR3( 0.0f , 0.0f , 0.0f ) );
 
 
-	//	Žè‘O‚Ì•Ç
+	//	æ‰‹å‰ã®å£
 	SetWall( D3DXVECTOR3( 0.0f , 0.0f , -WALL_POSITON ) , D3DXVECTOR3( 0.0f , 180.0f , 0.0f ) );
 
 
-	//‰E‚Ì•Ç
+	//å³ã®å£
 	SetWall( D3DXVECTOR3( WALL_POSITON , 0.0f , 0.0f ) , D3DXVECTOR3( 0.0f , 90.0f , 0.0f ) );
 
 
-	//	¶‚Ì•Ç
+	//	å·¦ã®å£
 	SetWall( D3DXVECTOR3( -WALL_POSITON , 0.0f , 0.0f ) , D3DXVECTOR3( 0.0f , -90.0f , 0.0f ) );
 
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitMeshWall( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitMeshWall( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitMeshWall( void )
 {
 
-	if( g_pVtxBufferMeshWall != NULL )	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pVtxBufferMeshWall != NULL )	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 		g_pVtxBufferMeshWall -> Release();
 		g_pVtxBufferMeshWall = NULL;
 
 	}	//	end of if
 
-	if( g_pIdxBufferMeshWall != NULL )	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pIdxBufferMeshWall != NULL )	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 		g_pIdxBufferMeshWall -> Release();
 		g_pIdxBufferMeshWall = NULL;
 
 	}	//	end of if
 
-	if( g_pTextureMeshWall != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureMeshWall != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 		g_pTextureMeshWall -> Release();
 		g_pTextureMeshWall = NULL;
@@ -159,10 +157,10 @@ void UninitMeshWall( void )
 }	//	end of func
  
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateMeshWall( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdateMeshWall( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateMeshWall( void )
 {
@@ -170,31 +168,31 @@ void UpdateMeshWall( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawMeshWall( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawMeshWall( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawMeshWall( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒpƒCƒvƒ‰ƒCƒ“‚ÌƒXƒgƒŠ[ƒ€
+	//	ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferMeshWall , 0 , sizeof( VERTEX_3D ));
 
 
-	//	ƒCƒ“ƒfƒbƒNƒX‚ÌƒZƒbƒg
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetIndices( g_pIdxBufferMeshWall );
 
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌÝ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureMeshWall );
 
 
@@ -205,10 +203,10 @@ void DrawMeshWall( void )
 		if( g_MeshWall[ Cnt ].Use == true )
 		{
 
-			//	‹ts—ñ‚È‚µ‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ãªã—ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorld( g_MeshWall[ Cnt ].World.Pos , g_MeshWall[ Cnt ].World.Rot , g_MeshWall[ Cnt ].World.Scl );
 
-			//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+			//	ãƒãƒªã‚´ãƒ³ã®æç”»
 			pDevice -> DrawIndexedPrimitive( D3DPT_TRIANGLESTRIP , 0 , 0 , VERTEX , 0 , VERTEX - 2 );
 
 		}	//	end of if
@@ -218,33 +216,33 @@ void DrawMeshWall( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void MakeVertexMeshWall( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Y )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice	ƒfƒoƒCƒX
-			UINT NumBlock_X				‰¡‚ÌƒuƒƒbƒN”
-			UINT NumBlock_Y				c‚ÌƒuƒƒbƒN”
-			float SizeBlock_X			XŽ²‚Ì‘å‚«‚³
-			float SizeBlock_Y			YŽ²‚Ì‘å‚«‚³
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	void MakeVertexMeshWall( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Y )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice	ãƒ‡ãƒã‚¤ã‚¹
+			UINT NumBlock_X				æ¨ªã®ãƒ–ãƒ­ãƒƒã‚¯æ•°
+			UINT NumBlock_Y				ç¸¦ã®ãƒ–ãƒ­ãƒƒã‚¯æ•°
+			float SizeBlock_X			Xè»¸ã®å¤§ãã•
+			float SizeBlock_Y			Yè»¸ã®å¤§ãã•
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜Ž:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexMeshWall( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT NumBlock_Y , float SizeBlock_X , float SizeBlock_Y )
 {
 
-	VERTEX_3D* pVtx;	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	VERTEX_3D* pVtx;	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 
-	WORD* pIdx;	//	ƒ|ƒCƒ“ƒ^•Ï”
+	WORD* pIdx;	//	ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 
 	HRESULT hr;
 
-	//	’¸“_”‚ÌŒvŽZ
+	//	é ‚ç‚¹æ•°ã®è¨ˆç®—
 	int VerTex = ( NumBlock_X + 1 ) * ( NumBlock_Y + 1 );
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌŒvŽZ
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨ˆç®—
 	int IdxVerTexMeshWall = ( 2 + 2 * NumBlock_X ) * NumBlock_Y + ( NumBlock_Y - 1 ) * 2;
 
 
-	//	’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	if( FAILED( pDevice -> CreateVertexBuffer( sizeof( VERTEX_3D ) * NUM_VERTEX * VerTex , D3DUSAGE_WRITEONLY , FVF_VERTEX_3D , D3DPOOL_MANAGED , &g_pVtxBufferMeshWall , NULL ) ) )
 	{
 
@@ -252,13 +250,13 @@ HRESULT MakeVertexMeshWall( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT N
 
 	}	//	end of if
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ì¶¬
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	hr = pDevice -> CreateIndexBuffer(
-		sizeof( WORD ) * IdxVerTexMeshWall ,	//	ƒoƒbƒtƒ@—Ê
-		D3DUSAGE_WRITEONLY ,	//	Žg—p•û–@ƒtƒ‰ƒO
-		D3DFMT_INDEX16 , //	ƒCƒ“ƒfƒbƒNƒXƒtƒH[ƒ}ƒbƒg
-		D3DPOOL_MANAGED , //	ƒƒ‚ƒŠ‚ÌŠÇ—•û–@
-		&g_pIdxBufferMeshWall ,	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^[ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ÌƒAƒhƒŒƒX
+		sizeof( WORD ) * IdxVerTexMeshWall ,	//	ãƒãƒƒãƒ•ã‚¡é‡
+		D3DUSAGE_WRITEONLY ,	//	ä½¿ç”¨æ–¹æ³•ãƒ•ãƒ©ã‚°
+		D3DFMT_INDEX16 , //	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
+		D3DPOOL_MANAGED , //	ãƒ¡ãƒ¢ãƒªã®ç®¡ç†æ–¹æ³•
+		&g_pIdxBufferMeshWall ,	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
 		NULL);
 
 	if( FAILED( hr ) )
@@ -269,96 +267,96 @@ HRESULT MakeVertexMeshWall( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT N
 	}	//	end of if
 
 
-	//	ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferMeshWall -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
-	//	c
+	//	ç¸¦
 	for( UINT Cnt1 = 0 ; Cnt1 < NumBlock_Y + 1 ; Cnt1++ )
 	{
-		//	‰¡
+		//	æ¨ª
 		for( UINT Cnt2 = 0 ; Cnt2 < NumBlock_X + 1 ; Cnt2++ )
 		{
 
-			//	’¸“_À•W‚ÌÝ’è
-			//	‰œ‚Ì•Ç
+			//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
+			//	å¥¥ã®å£
 			pVtx[ 0 ].pos = D3DXVECTOR3( ( SizeBlock_X * NumBlock_X / 2 ) - NumBlock_X * SizeBlock_X + ( SizeBlock_X * Cnt2 ) , ( SizeBlock_Y * NumBlock_Y ) - ( SizeBlock_Y * Cnt1 ) , 0.0f );
 
 
-			//	–@ü‚ÌÝ’è
+			//	æ³•ç·šã®è¨­å®š
 			pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 1.0f , 0.0f );
 
 
-			//	’¸“_F‚ÌÝ’è
+			//	é ‚ç‚¹è‰²ã®è¨­å®š
 			pVtx[ 0 ].color = D3DCOLOR_RGBA( 255 , 255 , 255 , 255 );
 
 
-			//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+			//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 			pVtx[ 0 ].tex = D3DXVECTOR2( ( float )Cnt2 , ( float )Cnt1 );
 
-			pVtx ++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pVtx ++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of for
 
 	}	//	end of for
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferMeshWall -> Unlock();
 
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ðƒƒbƒN
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯
 	g_pIdxBufferMeshWall -> Lock( 0 , 0 , (void**)&pIdx , 0 );
 
-	//	c
+	//	ç¸¦
 	for( UINT Cnt1 = 0 ; Cnt1 < NumBlock_Y ; Cnt1++ )
 	{
-		//	‚Í‚¶‚ß‚¶‚á‚È‚©‚Á‚½‚ç
-		//	k‘Þƒ|ƒŠƒSƒ“
+		//	ã¯ã˜ã‚ã˜ã‚ƒãªã‹ã£ãŸã‚‰
+		//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 		if( Cnt1 != 0 )
 		{
-			//	1“_‘Å‚Â
+			//	1ç‚¹æ‰“ã¤
 
 			pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 
-			pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of if
 
-		//	2“_‘Å‚Â
+		//	2ç‚¹æ‰“ã¤
 
 		pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 );
 		pIdx[ 1 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - ( NumBlock_X + 1 );
 
-		pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+		pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
-		//	‰¡
+		//	æ¨ª
 		for( UINT Cnt2 = 0 ; Cnt2 < NumBlock_X ; Cnt2++ )
 		{
-			//	2“_‘Å‚Â
+			//	2ç‚¹æ‰“ã¤
 
 			pIdx[ 0 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) + Cnt2;
 			pIdx[ 1 ] = ( ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) + 1 ) - ( NumBlock_X + 1 ) + Cnt2;
 
-			pIdx += 2;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx += 2;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of for
 
-		//	ÅŒã‚¶‚á‚È‚©‚Á‚½‚ç
-		//	k‘Þƒ|ƒŠƒSƒ“
+		//	æœ€å¾Œã˜ã‚ƒãªã‹ã£ãŸã‚‰
+		//	ç¸®é€€ãƒãƒªã‚´ãƒ³
 		if( Cnt1 != NumBlock_Y - 1 )
 		{
-			//	1“_‘Å‚Â
+			//	1ç‚¹æ‰“ã¤
 
 			pIdx[ 0 ] = ( Cnt1 + 1 ) * ( NumBlock_X + 1 ) - 1;
 
-			pIdx++;	//	ƒ|ƒCƒ“ƒ^‚ð‚¸‚ç‚·
+			pIdx++;	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 
 		}	//	end of if
 
 	}	//	end of for
 
 
-	//	ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pIdxBufferMeshWall -> Unlock();
 
 	return S_OK;
@@ -366,11 +364,11 @@ HRESULT MakeVertexMeshWall( LPDIRECT3DDEVICE9 pDevice , UINT NumBlock_X , UINT N
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetWall( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Rot		‰ñ“]—Ê
- –ß‚è’l:	
- à–¾:		•Ç‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetWall( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Rot		å›žè»¢é‡
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		å£ã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetWall( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 {
@@ -381,13 +379,13 @@ void SetWall( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 		if( g_MeshWall[ Cnt ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			g_MeshWall[ Cnt ].World.Pos = Pos;
 
-			//	‰ñ“]—Ê
+			//	å›žè»¢é‡
 			g_MeshWall[ Cnt ].World.Rot = Rot;
 
-			//	Žg—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_MeshWall[ Cnt ].Use = true;
 
 			break;
@@ -399,10 +397,10 @@ void SetWall( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	MESHWALL *GetMeshWall( )
- ˆø”:		
- –ß‚è’l:	‚È‚µ
- à–¾:		ƒƒbƒVƒ…ƒEƒH[ƒ‹î•ñŽæ“¾
+ é–¢æ•°å:	MESHWALL *GetMeshWall( )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	ãªã—
+ èª¬æ˜Ž:		ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«æƒ…å ±å–å¾—
 -----------------------------------------------------------------------------*/
 MESHWALL *GetMeshWall( void )
 {
