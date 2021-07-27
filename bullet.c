@@ -1,17 +1,15 @@
 /*=============================================================================
 
-		’e[ bullet.cpp ]
+		å¼¾[ bullet.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìŽÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2016/11/24
 -------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include <math.h>
 #include "main.h"
@@ -28,101 +26,101 @@
 #include "Effect.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/bullet000.png"
 
-#define MAX_BULLET ( 100 )	//	’eÅ‘å”
+#define MAX_BULLET ( 100 )	//	å¼¾æœ€å¤§æ•°
 
-#define POLYGON_X ( 5.0f )	//	ƒ|ƒŠƒSƒ“‚Ì‚w
-#define POLYGON_Y ( 5.0f )	//	ƒ|ƒŠƒSƒ“‚Ì‚x
+#define POLYGON_X ( 5.0f )	//	ãƒãƒªã‚´ãƒ³ã®ï¼¸
+#define POLYGON_Y ( 5.0f )	//	ãƒãƒªã‚´ãƒ³ã®ï¼¹
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 typedef struct
 {
-	WORLD World;	//	ƒ[ƒ‹ƒh•ÏŠ·—p•Ï”
-	D3DXVECTOR3 Move;	//	ˆÚ“®—Ê
-	int LIfe;			//	Žõ–½
-	float length;	//	’·‚³
-	float Radius;	//	”¼Œa
-	bool Use;	//	Žg—pƒtƒ‰ƒO
+	WORLD World;	//	ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ç”¨å¤‰æ•°
+	D3DXVECTOR3 Move;	//	ç§»å‹•é‡
+	int LIfe;			//	å¯¿å‘½
+	float length;	//	é•·ã•
+	float Radius;	//	åŠå¾„
+	bool Use;	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 
 }BULLET;
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexBullet( LPDIRECT3DDEVICE9 pDevice );
 
-//	“–‚½‚è”»’è
+//	å½“ãŸã‚Šåˆ¤å®š
 void Collision( int CntBullet );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferBullet = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DTEXTURE9 g_pTextureBullet = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferBullet = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DTEXTURE9 g_pTextureBullet = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-BULLET g_Bullet[ MAX_BULLET ];	//	’e‚Ì\‘¢‘Ì
+BULLET g_Bullet[ MAX_BULLET ];	//	å¼¾ã®æ§‹é€ ä½“
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitBullet( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitBullet( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitBullet( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureBullet  ) ) )
 	{
-		MessageBox( NULL , "[ bullet.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚Ýž‚Ý‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ bullet.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexBullet( pDevice );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_BULLET ; Cnt++ )
 	{
-		//	À•W
+		//	åº§æ¨™
 		g_Bullet[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§çŽ‡
 		g_Bullet[ Cnt ].World.Scl =  D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	‰ñ“]—Ê
+		//	å›žè»¢é‡
 		g_Bullet[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	ˆÚ“®—Ê
+		//	ç§»å‹•é‡
 		g_Bullet[ Cnt ].Move = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Žõ–½
+		//	å¯¿å‘½
 		g_Bullet[ Cnt ].LIfe = 0;
 
-		//	’·‚³
+		//	é•·ã•
 		g_Bullet[ Cnt ].length = 1.0f;
 
-		//	”¼Œa
+		//	åŠå¾„
 		g_Bullet[ Cnt ].Radius = 30.0f;
 
-		//	Žg—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_Bullet[ Cnt ].Use = false;
 
 	}	//	end of for
@@ -130,22 +128,22 @@ void InitBullet( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitBullet( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitBullet( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitBullet( void )
 {
 
-	if( g_pVtxBufferBullet != NULL )	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pVtxBufferBullet != NULL )	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 		g_pVtxBufferBullet -> Release();
 		g_pVtxBufferBullet = NULL;
 
 	}	//	end of if
 
-	if( g_pTextureBullet != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureBullet != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 		g_pTextureBullet -> Release();
 		g_pTextureBullet = NULL;
@@ -155,15 +153,15 @@ void UninitBullet( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateBullet( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdateBullet( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateBullet( void )
 {
 
-	//	‰e‚Ìî•ñŽæ“¾
+	//	å½±ã®æƒ…å ±å–å¾—
 	SHADOW *Shadow = GetShadow( 1 );
 
 
@@ -173,13 +171,13 @@ void UpdateBullet( void )
 		if( g_Bullet[ Cnt ].Use == true )
 		{			
 
-			//	À•WˆÚ“®
+			//	åº§æ¨™ç§»å‹•
 			g_Bullet[ Cnt ].World.Pos += g_Bullet[ Cnt ].Move;
 
-			//	ƒ^[ƒQƒbƒg‚Æ‚Ì“–‚½‚è”»’è
+			//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ã®å½“ãŸã‚Šåˆ¤å®š
 			Collision( Cnt );
 
-			//	ƒGƒtƒFƒNƒg‚ÌƒZƒbƒg
+			//	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚»ãƒƒãƒˆ
 			SetEffect( g_Bullet[ Cnt ].World.Pos , D3DXCOLOR( 255 , 0 , 0 , 255 ) , 5 , 15.0f );
 
 
@@ -191,33 +189,33 @@ void UpdateBullet( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawBullet( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawBullet( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawBullet( void )
 {
 
-	//	ƒfƒoƒCƒX‚ÌŽæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒpƒCƒvƒ‰ƒCƒ“‚ÌƒXƒgƒŠ[ƒ€
+	//	ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferBullet , 0 , sizeof( VERTEX_3D ));
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚ÌÝ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureBullet );
 
-	//	Zƒoƒbƒtƒ@
+	//	Zãƒãƒƒãƒ•ã‚¡
 	pDevice -> SetRenderState( D3DRS_ZENABLE , D3DZB_TRUE );
 	pDevice -> SetRenderState( D3DRS_ZWRITEENABLE , FALSE );
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ð—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , FALSE );
 
 
@@ -228,10 +226,10 @@ void DrawBullet( void )
 		if( g_Bullet[ Cnt ].Use == true )
 		{
 
-			//	‹ts—ñ‚ ‚è‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ã‚ã‚Šã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorldInv( g_Bullet[ Cnt ].World.Pos , g_Bullet[ Cnt ].World.Rot , g_Bullet[ Cnt ].World.Scl );
 
-			//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+			//	ãƒãƒªã‚´ãƒ³ã®æç”»
 			pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , Cnt * NUM_VERTEX , NUM_POLYGON );
 
 		}	//	end of if
@@ -239,73 +237,73 @@ void DrawBullet( void )
 	}	//	end of for
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ð—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , TRUE );
 
-	//	Œ³‚É–ß‚·
+	//	å…ƒã«æˆ»ã™
 	pDevice -> SetRenderState( D3DRS_ZENABLE , D3DZB_TRUE );
 	pDevice -> SetRenderState( D3DRS_ZWRITEENABLE , TRUE );
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertexBullet( LPDIRECT3DDEVICE9 pDevice )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice	ƒfƒoƒCƒX
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertexBullet( LPDIRECT3DDEVICE9 pDevice )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice	ãƒ‡ãƒã‚¤ã‚¹
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜Ž:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexBullet( LPDIRECT3DDEVICE9 pDevice )
 {
 
-	VERTEX_3D* pVtx;	//	‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	VERTEX_3D* pVtx;	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 
 
-	//	’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	if( FAILED( pDevice -> CreateVertexBuffer( sizeof( VERTEX_3D ) * NUM_VERTEX * MAX_BULLET , D3DUSAGE_WRITEONLY , FVF_VERTEX_3D , D3DPOOL_MANAGED , &g_pVtxBufferBullet , NULL ) ) )
 	{
 		return E_FAIL;
 	}	//	end of if
 
 
-	//	ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferBullet -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
 
 	for( int Cnt = 0 ; Cnt < MAX_BULLET ; Cnt++ )
 	{
 
-		//	’¸“_À•W‚ÌÝ’è
+		//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].pos = D3DXVECTOR3( -POLYGON_X , POLYGON_Y  , 0.0f );
 		pVtx[ 1 ].pos = D3DXVECTOR3( POLYGON_X  , POLYGON_Y  , 0.0f );
 		pVtx[ 2 ].pos = D3DXVECTOR3( -POLYGON_X , -POLYGON_Y  , 0.0f );
 		pVtx[ 3 ].pos = D3DXVECTOR3( POLYGON_X  , -POLYGON_Y  , 0.0f );
 
 
-		//	–@ü‚ÌÝ’è
+		//	æ³•ç·šã®è¨­å®š
 		pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 1 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 2 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 3 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 
-		//	’¸“_F‚ÌÝ’è
+		//	é ‚ç‚¹è‰²ã®è¨­å®š
 		pVtx[ 0 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 1 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 2 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 3 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 
-		//	ƒeƒNƒXƒ`ƒƒÀ•W‚ÌÝ’è
+		//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].tex = D3DXVECTOR2( 0 , 0 );
 		pVtx[ 1 ].tex = D3DXVECTOR2( 1 , 0 );
 		pVtx[ 2 ].tex = D3DXVECTOR2( 0 , 1 );
 		pVtx[ 3 ].tex = D3DXVECTOR2( 1 , 1 );
 
-		pVtx += 4;	//	pVtx‚ð‚¸‚ç‚·
+		pVtx += 4;	//	pVtxã‚’ãšã‚‰ã™
 
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferBullet -> Unlock();
 
 	return S_OK;
@@ -313,12 +311,12 @@ HRESULT MakeVertexBullet( LPDIRECT3DDEVICE9 pDevice )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetBullet( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , float Length )
- ˆø”:		D3DXVECTOR3 Pos		À•W
-			D3DXVECTOR3 Rot		‰ñ“]—Ê
-			float Length		’·‚³
- –ß‚è’l:	
- à–¾:		’e‚ÌƒZƒbƒg
+ é–¢æ•°å:	void SetBullet( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , float Length )
+ å¼•æ•°:		D3DXVECTOR3 Pos		åº§æ¨™
+			D3DXVECTOR3 Rot		å›žè»¢é‡
+			float Length		é•·ã•
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		å¼¾ã®ã‚»ãƒƒãƒˆ
 -----------------------------------------------------------------------------*/
 void SetBullet( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , float Length )
 {
@@ -331,7 +329,7 @@ void SetBullet( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , float Length )
 		if( g_Bullet[ Cnt ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			//g_Bullet[ CntBullet ].World.Pos.x = cosf( D3DXToRadian( Rot.x ) ) * sinf( D3DXToRadian( rot ) ) * Length + Pos.x;
 			//g_Bullet[ CntBullet ].World.Pos.y = sinf( D3DXToRadian( Rot.x ) ) * Length + Pos.y;
 			//g_Bullet[ CntBullet ].World.Pos.z = cosf( D3DXToRadian( Rot.x ) ) * cosf( D3DXToRadian( rot ) ) * Length + Pos.z;
@@ -341,15 +339,15 @@ void SetBullet( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , float Length )
 			g_Bullet[ Cnt ].World.Pos.z = Pos.z;
 
 
-			//	ˆÚ“®—Ê
+			//	ç§»å‹•é‡
 			g_Bullet[ Cnt ].Move.x = cosf( D3DXToRadian( Rot.x ) ) * sinf( D3DXToRadian( rot ) ) * Length;
 			g_Bullet[ Cnt ].Move.y = sinf( D3DXToRadian( Rot.x ) ) * Length;
 			g_Bullet[ Cnt ].Move.z = cosf( D3DXToRadian( Rot.x ) ) * cosf( D3DXToRadian( rot ) ) * Length;
 
-			//	Žõ–½
+			//	å¯¿å‘½
 			g_Bullet[ Cnt ].LIfe = 100;
 
-			//	Žg—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_Bullet[ Cnt ].Use = true;
 
 			break;
@@ -361,22 +359,22 @@ void SetBullet( D3DXVECTOR3 Pos , D3DXVECTOR3 Rot , float Length )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void Collision( int Cnt )
- ˆø”:		int Cnt	’e\‘¢‘Ì‚ÌƒJƒEƒ“ƒ^
- –ß‚è’l:	
- à–¾:		“–‚½‚è”»’è
+ é–¢æ•°å:	void Collision( int Cnt )
+ å¼•æ•°:		int Cnt	å¼¾æ§‹é€ ä½“ã®ã‚«ã‚¦ãƒ³ã‚¿
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜Ž:		å½“ãŸã‚Šåˆ¤å®š
 -----------------------------------------------------------------------------*/
 void Collision( int Cnt )
 {
 
-	//	ƒXƒRƒAî•ñ‚ÌŽæ“¾
+	//	ã‚¹ã‚³ã‚¢æƒ…å ±ã®å–å¾—
 	int *Score = GetScore();
 
-	//	ƒ^[ƒQƒbƒgî•ñ‚ÌŽæ“¾
+	//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæƒ…å ±ã®å–å¾—
 	ENEMY *Enemy = GetEnemyNor();
 	ENEMY *EnemyFly = GetEnemyFly();
 
-	//	ƒƒbƒVƒ…ƒEƒH[ƒ‹î•ñŽæ“¾
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«æƒ…å ±å–å¾—
 	MESHWALL *MeshWall = GetMeshWall();
 
 
@@ -386,27 +384,27 @@ void Collision( int Cnt )
 		if( Enemy -> Use == true )
 		{
 
-			//	‹…‚Ì“–‚½‚è”»’è
+			//	çƒã®å½“ãŸã‚Šåˆ¤å®š
 			if( SphereCollision( g_Bullet[ Cnt ].World.Pos , D3DXVECTOR3( Enemy -> World.Pos.x , Enemy -> World.Pos.y + 20.0f , Enemy -> World.Pos.z ) , g_Bullet[ Cnt ].Radius , Enemy -> Radius ) )
 			{
 
-				//	“G‚ÌŽg—pƒtƒ‰ƒO‚ðOFF‚É‚·‚é
+				//	æ•µã®ä½¿ç”¨ãƒ•ãƒ©ã‚°ã‚’OFFã«ã™ã‚‹
 				Enemy -> Use = false;
 
-				//	’e‚ÌŽg—pƒtƒ‰ƒO‚ðOFF‚É‚·‚é
+				//	å¼¾ã®ä½¿ç”¨ãƒ•ãƒ©ã‚°ã‚’OFFã«ã™ã‚‹
 				g_Bullet[ Cnt ].Use = false;
 
-				//	ƒ^[ƒQƒbƒg‚Ì‰e‚ðÁ‚·i +1‚ÍƒvƒŒƒCƒ„[‚©‚çæ‚Éì‚Á‚Ä‚¢‚é‚©‚ç j
+				//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®å½±ã‚’æ¶ˆã™ï¼ˆ +1ã¯ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰å…ˆã«ä½œã£ã¦ã„ã‚‹ã‹ã‚‰ ï¼‰
 				IndexShadow( CntEnemy + 1 );
 
 
-				//	ƒXƒRƒA‚Ì‰ÁŽZ
+				//	ã‚¹ã‚³ã‚¢ã®åŠ ç®—
 				*Score += 50;
 
-				//	”š”­‚ÌƒZƒbƒg
+				//	çˆ†ç™ºã®ã‚»ãƒƒãƒˆ
 				SetExplosin( D3DXVECTOR3( Enemy -> World.Pos.x , Enemy -> World.Pos.y + 20.0f , Enemy -> World.Pos.z ) , 30.0f );
 
-				//	‰¹ŠyÄ¶
+				//	éŸ³æ¥½å†ç”Ÿ
 				PlaySound( SOUND_LABEL_SE_HIT );
 
 			}	//	end of if
@@ -421,27 +419,27 @@ void Collision( int Cnt )
 		if( EnemyFly -> Use == true )
 		{
 
-			//	‹…‚Ì“–‚½‚è”»’è
+			//	çƒã®å½“ãŸã‚Šåˆ¤å®š
 			if( SphereCollision( g_Bullet[ Cnt ].World.Pos , D3DXVECTOR3( EnemyFly -> World.Pos.x , EnemyFly -> World.Pos.y + 20.0f , EnemyFly -> World.Pos.z ) , g_Bullet[ Cnt ].Radius , EnemyFly -> Radius ) )
 			{
 
-				//	“G‚ÌŽg—pƒtƒ‰ƒO‚ðOFF‚É‚·‚é
+				//	æ•µã®ä½¿ç”¨ãƒ•ãƒ©ã‚°ã‚’OFFã«ã™ã‚‹
 				EnemyFly -> Use = false;
 
-				//	’e‚ÌŽg—pƒtƒ‰ƒO‚ðOFF‚É‚·‚é
+				//	å¼¾ã®ä½¿ç”¨ãƒ•ãƒ©ã‚°ã‚’OFFã«ã™ã‚‹
 				g_Bullet[ Cnt ].Use = false;
 
-				//	ƒ^[ƒQƒbƒg‚Ì‰e‚ðÁ‚·i +1‚ÍƒvƒŒƒCƒ„[‚©‚çæ‚Éì‚Á‚Ä‚¢‚é‚©‚ç j
+				//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®å½±ã‚’æ¶ˆã™ï¼ˆ +1ã¯ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰å…ˆã«ä½œã£ã¦ã„ã‚‹ã‹ã‚‰ ï¼‰
 				IndexShadow( CntEnemyFly + 11 );
 
 
-				//	ƒXƒRƒA‚Ì‰ÁŽZ
+				//	ã‚¹ã‚³ã‚¢ã®åŠ ç®—
 				*Score += 100;
 
-				//	”š”­‚ÌƒZƒbƒg
+				//	çˆ†ç™ºã®ã‚»ãƒƒãƒˆ
 				SetExplosin( D3DXVECTOR3( EnemyFly -> World.Pos.x , EnemyFly -> World.Pos.y + 20.0f , EnemyFly -> World.Pos.z ) , 30.0f );
 
-				//	‰¹ŠyÄ¶
+				//	éŸ³æ¥½å†ç”Ÿ
 				PlaySound( SOUND_LABEL_SE_HIT );
 
 			}
@@ -450,9 +448,9 @@ void Collision( int Cnt )
 
 	}	//	end of for
 
-	//	ƒƒbƒVƒ…ƒEƒH[ƒ‹‚Æ‚Ì“–‚½‚è”»’è
+	//	ãƒ¡ãƒƒã‚·ãƒ¥ã‚¦ã‚©ãƒ¼ãƒ«ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 
-	//	‚yŽ²”»’è
+	//	ï¼ºè»¸åˆ¤å®š
 	if( g_Bullet[ Cnt ].World.Pos.z + 20.0f > MeshWall[ 0 ].World.Pos.z || g_Bullet[ Cnt ].World.Pos.z - 20.0f < MeshWall[ 1 ].World.Pos.z )
 	{
 
@@ -460,7 +458,7 @@ void Collision( int Cnt )
 
 	}	//	end of if
 
-	//	XŽ²”»’è
+	//	Xè»¸åˆ¤å®š
 	if( g_Bullet[ Cnt ].World.Pos.x + 20.0f > MeshWall[ 2 ].World.Pos.x || g_Bullet[ Cnt ].World.Pos.x - 20.0f < MeshWall[ 3 ].World.Pos.x )
 	{
 
@@ -471,10 +469,10 @@ void Collision( int Cnt )
 }
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	BULLET *GetBullet( void )
- ˆø”:		
- –ß‚è’l:	return &g_Bullet[ 0 ];
- à–¾:		’eî•ñŽæ“¾
+ é–¢æ•°å:	BULLET *GetBullet( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	return &g_Bullet[ 0 ];
+ èª¬æ˜Ž:		å¼¾æƒ…å ±å–å¾—
 -----------------------------------------------------------------------------*/
 BULLET *GetBullet( void )
 {
