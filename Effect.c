@@ -1,116 +1,114 @@
 /*=============================================================================
 
-		ƒGƒtƒFƒNƒg[ Effect.cpp ]
+		ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ[ Effect.cpp ]
 
 -------------------------------------------------------------------------------
-	¡@»ìÒ
-		‘å–ì‘ñ–ç
 
-	¡@ì¬“ú
+	â– ã€€ä½œæˆæ—¥
 		2017/01/22
 -------------------------------------------------------------------------------
-	¡@Update
+	â– ã€€Update
 =============================================================================*/
 
 /*-----------------------------------------------------------------------------
-	ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+	ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 -----------------------------------------------------------------------------*/
 #include "main.h"
 #include "Effect.h"
 
 /*-----------------------------------------------------------------------------
-	’è”’è‹`
+	å®šæ•°å®šç¾©
 -----------------------------------------------------------------------------*/
 #define POLYGON00_TEXTURENAME "data/TEXTURE/GAME/effect000.jpg"
 
-#define MAX_EFFECT ( 100 )	//	ƒGƒtƒFƒNƒg‚ÌÅ‘å”
+#define MAX_EFFECT ( 100 )	//	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æœ€å¤§æ•°
 
 /*-----------------------------------------------------------------------------
-	—ñ‹“
+	åˆ—æŒ™
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
-	\‘¢‘Ì
+	æ§‹é€ ä½“
 -----------------------------------------------------------------------------*/
 typedef struct
 {
-	WORLD World;	//	ƒ[ƒ‹ƒh•ÏŠ·—p•Ï”
-	D3DXCOLOR Color;	//	F
-	int Life;	//	õ–½
-	float Radius;	//	”¼Œa
-	float RadiusValue;	//	”¼Œa‚Ì•Ï‰»—Ê
-	bool Use;	//	g—pƒtƒ‰ƒO
+	WORLD World;	//	ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ç”¨å¤‰æ•°
+	D3DXCOLOR Color;	//	è‰²
+	int Life;	//	å¯¿å‘½
+	float Radius;	//	åŠå¾„
+	float RadiusValue;	//	åŠå¾„ã®å¤‰åŒ–é‡
+	bool Use;	//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 
 }EFFECT;
 
 /*-----------------------------------------------------------------------------
-	ƒvƒƒgƒ^ƒCƒvéŒ¾
+	ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 -----------------------------------------------------------------------------*/
 
-//	’¸“_‚Ìì¬
+//	é ‚ç‚¹ã®ä½œæˆ
 HRESULT MakeVertexEffect( LPDIRECT3DDEVICE9 pDevice );
 
-//	’¸“_‚Ì•ÏX
+//	é ‚ç‚¹ã®å¤‰æ›´
 void VerTex( VERTEX_3D* pVtx , int Cnt );
 
 /*-----------------------------------------------------------------------------
-	ƒOƒ[ƒoƒ‹•Ï”
+	ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 -----------------------------------------------------------------------------*/
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferEffect = NULL;	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-LPDIRECT3DTEXTURE9 g_pTextureEffect = NULL;//	ƒeƒNƒXƒ`ƒƒƒCƒ“ƒ^[ƒtƒF[ƒX
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBufferEffect = NULL;	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+LPDIRECT3DTEXTURE9 g_pTextureEffect = NULL;//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
-EFFECT g_Effect[ MAX_EFFECT ];	//	ƒGƒtƒFƒNƒg\‘¢‘Ì
+EFFECT g_Effect[ MAX_EFFECT ];	//	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæ§‹é€ ä½“
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void InitEffect( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		‰Šú‰»
+ é–¢æ•°å:	void InitEffect( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		åˆæœŸåŒ–
 -----------------------------------------------------------------------------*/
 void InitEffect( void )
 {
 
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//	ƒGƒ‰[ƒ`ƒFƒbƒN
+	//	ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	if( FAILED( D3DXCreateTextureFromFile(  pDevice , POLYGON00_TEXTURENAME , &g_pTextureEffect  ) ) )
 	{
-		MessageBox( NULL , "[ Effect.cpp ]\n POLYGON00_TEXTURENAME\n‚Ì“Ç‚İ‚İ‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½" , "Œx" , MB_OK | MB_ICONHAND );
+		MessageBox( NULL , "[ Effect.cpp ]\n POLYGON00_TEXTURENAME\nã®èª­ã¿è¾¼ã¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ" , "è­¦å‘Š" , MB_OK | MB_ICONHAND );
 
 	}	//	end of if
 
 
-	//	’¸“_‚Ìì¬
+	//	é ‚ç‚¹ã®ä½œæˆ
 	MakeVertexEffect( pDevice );
 
 
-	//	\‘¢‘Ì‰Šú‰»
+	//	æ§‹é€ ä½“åˆæœŸåŒ–
 	for( int Cnt = 0 ; Cnt < MAX_EFFECT ; Cnt++ )
 	{
 
-		//	À•W
+		//	åº§æ¨™
 		g_Effect[ Cnt ].World.Pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	‰ñ“]—Ê
+		//	å›è»¢é‡
 		g_Effect[ Cnt ].World.Rot = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
-		//	Šg‘å—¦
+		//	æ‹¡å¤§ç‡
 		g_Effect[ Cnt ].World.Scl = D3DXVECTOR3( 1.0f , 1.0f , 1.0f );
 
-		//	F
+		//	è‰²
 		g_Effect[ Cnt ].Color = D3DXCOLOR( 0.0f , 0.0f , 0.0f , 0.0f );
 
-		//	”¼Œa
+		//	åŠå¾„
 		g_Effect[ Cnt ].Radius = 0.0f;
 
-		//	”¼Œa‚Ì•Ï‰»—Ê
+		//	åŠå¾„ã®å¤‰åŒ–é‡
 		g_Effect[ Cnt ].RadiusValue = 0.0f;
 
-		//	õ–½
+		//	å¯¿å‘½
 		g_Effect[ Cnt ].Life = 0;
 
-		//	g—pƒtƒ‰ƒO
+		//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 		g_Effect[ Cnt ].Use = false;
 
 	}	//	end of for
@@ -119,21 +117,21 @@ void InitEffect( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UninitEffect( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		I—¹
+ é–¢æ•°å:	void UninitEffect( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		çµ‚äº†
 -----------------------------------------------------------------------------*/
 void UninitEffect( void )
 {
-	if( g_pVtxBufferEffect != NULL )	//	’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^ƒtƒF[ƒXŠJ•ú
+	if( g_pVtxBufferEffect != NULL )	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹é–‹æ”¾
 	{
 		g_pVtxBufferEffect -> Release();
 		g_pVtxBufferEffect = NULL;
 
 	}	//	end of if
 
-	if( g_pTextureEffect != NULL )	//	ƒeƒNƒXƒ`ƒƒƒ|ƒŠƒSƒ“ŠJ•ú
+	if( g_pTextureEffect != NULL )	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒªã‚´ãƒ³é–‹æ”¾
 	{
 		g_pTextureEffect -> Release();
 		g_pTextureEffect = NULL;
@@ -143,19 +141,19 @@ void UninitEffect( void )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void UpdateEffect( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		XV
+ é–¢æ•°å:	void UpdateEffect( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æ›´æ–°
 -----------------------------------------------------------------------------*/
 void UpdateEffect( void )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
 
-	//	ƒoƒbƒtƒ@‚ğƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferEffect -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
 
@@ -165,10 +163,10 @@ void UpdateEffect( void )
 		if( g_Effect[ Cnt ].Use == true )
 		{
 
-			//	”¼Œa‚ğŒ¸‚ç‚·
+			//	åŠå¾„ã‚’æ¸›ã‚‰ã™
 			g_Effect[ Cnt ].Radius -= g_Effect[ Cnt ].RadiusValue;
 
-			//	õ–½‚ğŒ¸‚ç‚·
+			//	å¯¿å‘½ã‚’æ¸›ã‚‰ã™
 			g_Effect[ Cnt ].Life--;
 
 			if( g_Effect[ Cnt ].Life < 0 )
@@ -178,7 +176,7 @@ void UpdateEffect( void )
 
 			}	//	end of if
 
-			//	’¸“_‚Ì•ÏX
+			//	é ‚ç‚¹ã®å¤‰æ›´
 			VerTex( pVtx , Cnt );
 
 		}	//	end of if
@@ -186,44 +184,44 @@ void UpdateEffect( void )
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferEffect -> Unlock();
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void DrawEffect( void )
- ˆø”:		
- –ß‚è’l:	
- à–¾:		•`‰æ
+ é–¢æ•°å:	void DrawEffect( void )
+ å¼•æ•°:		
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		æç”»
 -----------------------------------------------------------------------------*/
 void DrawEffect( void )
 {
-	//	ƒfƒoƒCƒX‚Ìæ“¾
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®å–å¾—
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
-	//	ƒpƒCƒvƒ‰ƒCƒ“‚ÌƒXƒgƒŠ[ƒ€
+	//	ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®ã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	pDevice -> SetStreamSource( 0 , g_pVtxBufferEffect , 0 , sizeof( VERTEX_3D ));
 
-	//	’¸“_ƒtƒH[ƒ}ƒbƒg‚Ìİ’è
+	//	é ‚ç‚¹ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®è¨­å®š
 	pDevice -> SetFVF( FVF_VERTEX_3D );
 
-	//	ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
+	//	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
 	pDevice -> SetTexture( 0 , g_pTextureEffect );
 
-	//	Zƒoƒbƒtƒ@
+	//	Zãƒãƒƒãƒ•ã‚¡
 	pDevice -> SetRenderState( D3DRS_ZENABLE , D3DZB_TRUE );
 	pDevice -> SetRenderState( D3DRS_ZWRITEENABLE , FALSE );
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ğ—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , FALSE );
 
 
-	//	aƒuƒŒƒ“ƒhi‰ÁZ‡¬j
-	pDevice -> SetRenderState( D3DRS_BLENDOP , D3DBLENDOP_ADD );	//	Init‚É‘‚¢‚Ä‚ ‚é‚Ì‚ÅÈ—ª‰Â
-	pDevice -> SetRenderState( D3DRS_SRCBLEND , D3DBLEND_SRCALPHA );	//	Init‚É‘‚¢‚Ä‚ ‚é‚Ì‚ÅÈ—ª‰Â
+	//	aãƒ–ãƒ¬ãƒ³ãƒ‰ï¼ˆåŠ ç®—åˆæˆï¼‰
+	pDevice -> SetRenderState( D3DRS_BLENDOP , D3DBLENDOP_ADD );	//	Initã«æ›¸ã„ã¦ã‚ã‚‹ã®ã§çœç•¥å¯
+	pDevice -> SetRenderState( D3DRS_SRCBLEND , D3DBLEND_SRCALPHA );	//	Initã«æ›¸ã„ã¦ã‚ã‚‹ã®ã§çœç•¥å¯
 	pDevice -> SetRenderState( D3DRS_DESTBLEND , D3DBLEND_ONE );
 
 
@@ -234,10 +232,10 @@ void DrawEffect( void )
 		if( g_Effect[ Cnt ].Use == true )
 		{
 
-			//	‹ts—ñ‚ ‚è‚Ìƒ[ƒ‹ƒhÀ•W•ÏŠ·
+			//	é€†è¡Œåˆ—ã‚ã‚Šã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™å¤‰æ›
 			SetWorldInv( g_Effect[ Cnt ].World.Pos , g_Effect[ Cnt ].World.Rot , g_Effect[ Cnt ].World.Scl );
 
-			//	ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+			//	ãƒãƒªã‚´ãƒ³ã®æç”»
 			pDevice -> DrawPrimitive( D3DPT_TRIANGLESTRIP , Cnt * NUM_VERTEX , NUM_POLYGON );
 
 		}	//	end of if
@@ -245,79 +243,79 @@ void DrawEffect( void )
 	}	//	end of for
 
 
-	//	Œ³‚É–ß‚·
+	//	å…ƒã«æˆ»ã™
 	pDevice -> SetRenderState( D3DRS_ALPHABLENDENABLE , TRUE );
 	pDevice -> SetRenderState( D3DRS_SRCBLEND , D3DBLEND_SRCALPHA );
 	pDevice -> SetRenderState( D3DRS_DESTBLEND , D3DBLEND_INVSRCALPHA );
 
 
-	//	‘S‘Ì‚Ìƒ‰ƒCƒg‚ğ—LŒø‚É‚·‚é
+	//	å…¨ä½“ã®ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	pDevice -> SetRenderState( D3DRS_LIGHTING , TRUE );
 
-	//	Œ³‚É–ß‚·
+	//	å…ƒã«æˆ»ã™
 	pDevice -> SetRenderState( D3DRS_ZENABLE , D3DZB_TRUE );
 	pDevice -> SetRenderState( D3DRS_ZWRITEENABLE , TRUE );
 
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	HRESULT MakeVertexEffect( LPDIRECT3DDEVICE9 pDevice )
- ˆø”:		LPDIRECT3DDEVICE9 pDevice	ƒfƒoƒCƒX
- –ß‚è’l:	—Ç‚¢ê‡	return S_OK;
-			ƒ_ƒ‚Èê‡	return E_FAIL;
- à–¾:		’¸“_‚Ìì¬
+ é–¢æ•°å:	HRESULT MakeVertexEffect( LPDIRECT3DDEVICE9 pDevice )
+ å¼•æ•°:		LPDIRECT3DDEVICE9 pDevice	ãƒ‡ãƒã‚¤ã‚¹
+ æˆ»ã‚Šå€¤:	è‰¯ã„å ´åˆ	return S_OK;
+			ãƒ€ãƒ¡ãªå ´åˆ	return E_FAIL;
+ èª¬æ˜:		é ‚ç‚¹ã®ä½œæˆ
 -----------------------------------------------------------------------------*/
 HRESULT MakeVertexEffect( LPDIRECT3DDEVICE9 pDevice )
 {
 
-	//	‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
+	//	ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
 	VERTEX_3D* pVtx;
 
-	//	’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	//	é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	if( FAILED( pDevice -> CreateVertexBuffer( sizeof( VERTEX_3D ) * NUM_VERTEX * MAX_EFFECT , D3DUSAGE_WRITEONLY , FVF_VERTEX_3D , D3DPOOL_MANAGED , &g_pVtxBufferEffect , NULL ) ) )
 	{
 		return E_FAIL;
 	}	//	end of if
 
 
-	//	ƒoƒbƒtƒ@‚ğƒƒbƒN‚µ‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚é
+	//	ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹
 	g_pVtxBufferEffect -> Lock( 0 , 0 , (void**)&pVtx , 0 );
 
 
 	for( int Cnt = 0 ; Cnt < MAX_EFFECT ; Cnt++ )
 	{
 
-		//	’¸“_À•W‚Ìİ’è
+		//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 1 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 2 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 		pVtx[ 3 ].pos = D3DXVECTOR3( 0.0f , 0.0f , 0.0f );
 
 
-		//	–@ü‚Ìİ’è
+		//	æ³•ç·šã®è¨­å®š
 		pVtx[ 0 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 1 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 2 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 		pVtx[ 3 ].normal = D3DXVECTOR3( 0.0f , 0.0f , -1.0f );
 
-		//	’¸“_F‚Ìİ’è
+		//	é ‚ç‚¹è‰²ã®è¨­å®š
 		pVtx[ 0 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 1 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 2 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 		pVtx[ 3 ].color = D3DXCOLOR( 255 , 255 , 255 , 255 );
 
-		//	ƒeƒNƒXƒ`ƒƒÀ•W‚Ìİ’è
+		//	ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã®è¨­å®š
 		pVtx[ 0 ].tex = D3DXVECTOR2( 0 , 0 );
 		pVtx[ 1 ].tex = D3DXVECTOR2( 1 , 0 );
 		pVtx[ 2 ].tex = D3DXVECTOR2( 0 , 1 );
 		pVtx[ 3 ].tex = D3DXVECTOR2( 1 , 1 );
 
-		pVtx += 4;	//	pVtx‚ğ‚¸‚ç‚·
+		pVtx += 4;	//	pVtxã‚’ãšã‚‰ã™
 
 	}	//	end of for
 
 
-	//	ƒoƒbƒtƒ@‚ÌƒAƒ“ƒƒbƒN
+	//	ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 	g_pVtxBufferEffect -> Unlock();
 
 	return S_OK;
@@ -325,27 +323,27 @@ HRESULT MakeVertexEffect( LPDIRECT3DDEVICE9 pDevice )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void VerTex( VERTEX_3D* pVtx , int Cnt )
- ˆø”:		VERTEX_3D* pVtx		‰¼‘zƒAƒhƒŒƒX‚ğæ“¾‚·‚éƒ|ƒCƒ“ƒ^•Ï”
-			int Cnt				ƒGƒtƒFƒNƒg\‘¢‘Ì‚ÌƒJƒEƒ“ƒ^
- –ß‚è’l:	
- à–¾:		’¸“_‚Ì•ÏX
+ é–¢æ•°å:	void VerTex( VERTEX_3D* pVtx , int Cnt )
+ å¼•æ•°:		VERTEX_3D* pVtx		ä»®æƒ³ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°
+			int Cnt				ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæ§‹é€ ä½“ã®ã‚«ã‚¦ãƒ³ã‚¿
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		é ‚ç‚¹ã®å¤‰æ›´
 -----------------------------------------------------------------------------*/
 void VerTex( VERTEX_3D* pVtx , int Cnt )
 {
 
-	//	pVtx‚ğ‚¸‚ç‚·
+	//	pVtxã‚’ãšã‚‰ã™
 	pVtx += Cnt * NUM_VERTEX;
 
 
-	//	’¸“_À•W‚Ìİ’è
+	//	é ‚ç‚¹åº§æ¨™ã®è¨­å®š
 	pVtx[ 0 ].pos = D3DXVECTOR3( -g_Effect[ Cnt ].Radius , g_Effect[ Cnt ].Radius , 0.0f );
 	pVtx[ 1 ].pos = D3DXVECTOR3(  g_Effect[ Cnt ].Radius , g_Effect[ Cnt ].Radius , 0.0f );
 	pVtx[ 2 ].pos = D3DXVECTOR3( -g_Effect[ Cnt ].Radius , -g_Effect[ Cnt ].Radius , 0.0f );
 	pVtx[ 3 ].pos = D3DXVECTOR3(  g_Effect[ Cnt ].Radius , -g_Effect[ Cnt ].Radius , 0.0f );
 
 
-	//	’¸“_F‚Ìİ’è
+	//	é ‚ç‚¹è‰²ã®è¨­å®š
 	pVtx[ 0 ].color = D3DXCOLOR( g_Effect[ Cnt ].Color.r , g_Effect[ Cnt ].Color.g , g_Effect[ Cnt ].Color.b , g_Effect[ Cnt ].Color.a );
 	pVtx[ 1 ].color = D3DXCOLOR( g_Effect[ Cnt ].Color.r , g_Effect[ Cnt ].Color.g , g_Effect[ Cnt ].Color.b , g_Effect[ Cnt ].Color.a );
 	pVtx[ 2 ].color = D3DXCOLOR( g_Effect[ Cnt ].Color.r , g_Effect[ Cnt ].Color.g , g_Effect[ Cnt ].Color.b , g_Effect[ Cnt ].Color.a );
@@ -354,13 +352,13 @@ void VerTex( VERTEX_3D* pVtx , int Cnt )
 }	//	end of func
 
 /*-----------------------------------------------------------------------------
- ŠÖ”–¼:	void SetEffect( D3DXVECTOR3 Pos , D3DXCOLOR Color , int Life , float Radius )
- ˆø”:		D3DXVECTOR3 Pos			À•W
-			D3DXVECTOR2 VerTexPos	’¸“_À•W
-			int Life				õ–½
-			float Radius			”¼Œa
- –ß‚è’l:	
- à–¾:		ƒGƒtƒFƒNƒg‚ÌƒZƒbƒg 
+ é–¢æ•°å:	void SetEffect( D3DXVECTOR3 Pos , D3DXCOLOR Color , int Life , float Radius )
+ å¼•æ•°:		D3DXVECTOR3 Pos			åº§æ¨™
+			D3DXVECTOR2 VerTexPos	é ‚ç‚¹åº§æ¨™
+			int Life				å¯¿å‘½
+			float Radius			åŠå¾„
+ æˆ»ã‚Šå€¤:	
+ èª¬æ˜:		ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚»ãƒƒãƒˆ 
 -----------------------------------------------------------------------------*/
 void SetEffect( D3DXVECTOR3 Pos , D3DXCOLOR Color , int Life , float Radius )
 {
@@ -371,22 +369,22 @@ void SetEffect( D3DXVECTOR3 Pos , D3DXCOLOR Color , int Life , float Radius )
 		if( g_Effect[ Cnt ].Use == false )
 		{
 
-			//	À•W
+			//	åº§æ¨™
 			g_Effect[ Cnt ].World.Pos = Pos;
 
-			//	F
+			//	è‰²
 			g_Effect[ Cnt ].Color = Color;
 
-			//	õ–½
+			//	å¯¿å‘½
 			g_Effect[ Cnt ].Life = Life;
 
-			//	”¼Œa
+			//	åŠå¾„
 			g_Effect[ Cnt ].Radius = Radius;
 
-			//	”¼Œa‚Ì•Ï‰»—Ê
+			//	åŠå¾„ã®å¤‰åŒ–é‡
 			g_Effect[ Cnt ].RadiusValue = g_Effect[ Cnt ].Radius / g_Effect[ Cnt ].Life;
 
-			//	g—pƒtƒ‰ƒO
+			//	ä½¿ç”¨ãƒ•ãƒ©ã‚°
 			g_Effect[ Cnt ].Use = true;
 
 
